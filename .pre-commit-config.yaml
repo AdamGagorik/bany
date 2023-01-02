@@ -68,7 +68,7 @@ repos:
     - --autofix
   - id: pretty-format-toml
     exclude: |
-      (?x)^(poetry\.lock)$
+      (?x)^(poetry\.lock|pyproject.toml)$
     args:
     - --autofix
 - repo: https://github.com/pycqa/flake8
