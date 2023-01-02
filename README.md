@@ -5,7 +5,9 @@ A collection of scripts I've created to aid with budgeting using YNAB
 # Setup
 
 ```bash
-pipx install bany
+pyenv local 3.11.1
+pipx install bany --python $(which python)
+bany --help
 ```
 
 ## Create YNAB transactions from a PDF
