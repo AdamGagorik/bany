@@ -1,6 +1,6 @@
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]
+build-backend = "poetry_dynamic_versioning.backend"
 
 [tool.black]
 line-length = 120
@@ -13,7 +13,7 @@ lines_after_imports = 2
 
 [tool.poetry]
 name = "bany"
-version = "0.1.0"
+version = "0.0.0"
 description = ""
 authors = ["Adam Gagorik <adam.gagorik@gmail.com>"]
 readme = "README.md"
@@ -39,3 +39,6 @@ pytest = "^7.2.0"
 
 [tool.poetry.scripts]
 bany = 'bany.__main__:main'
+
+[tool.poetry-dynamic-versioning]
+enable = true
