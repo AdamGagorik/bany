@@ -129,8 +129,5 @@ dmypy.json
 .pyre/
 
 # Custom
-repos
 .idea
-repos.json
-all-repos.json
-repos_filtered.json
+cache.*
