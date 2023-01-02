@@ -1,0 +1,23 @@
+name: pre-commit-autoupdate
+
+on:
+  schedule:
+  - cron: 12 6 * * 1
+  workflow_dispatch:
+
+jobs:
+  pre-commit-autoupdate:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    - run: pip install pre-commit
+    - run: pre-commit autoupdate
+    - uses: peter-evans/create-pull-request@v4.1.3
+      with:
+        add-paths: .pre-commit-config.yaml
+        commit-message: '[pre-commit] automatic update'
+        title: '[pre-commit] automatic update'
+        body: ''
