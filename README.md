@@ -12,7 +12,7 @@ bany --help
 
 ## Create YNAB transactions from a PDF
 
-### `cfgs/extract-pdf-sample.yaml`
+### `config.yaml`
 
 - Define rules to match patterns in the text of a PDF
 - Define the transactions to create from these matches
