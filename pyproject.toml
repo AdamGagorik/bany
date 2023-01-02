@@ -1,0 +1,38 @@
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 120
+target-version = ['py39']
+
+[tool.isort]
+profile = "black"
+line_length = 120
+lines_after_imports = 2
+
+[tool.poetry]
+name = "bany"
+version = "0.1.0"
+description = ""
+authors = ["Adam Gagorik <adam.gagorik@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pdfplumber = "^0.7.6"
+python-dateutil = "^2.8.2"
+oauthlib = "^3.2.2"
+pydantic = "^1.10.4"
+python-dotenv = "^0.21.0"
+requests = "^2.28.1"
+rich = "^13.0.0"
+diskcache = "^5.4.0"
+responses = "^0.22.0"
+pytest = "^7.2.0"
+pandas = "^1.5.2"
+py-moneyed = "^3.0"
+PyYAML = "^6.0"
+
+[tool.poetry.scripts]
+bany = 'bany.__main__:main'
