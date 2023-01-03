@@ -15,9 +15,25 @@ jobs:
         python-version: '3.10'
     - run: pip install pre-commit
     - run: pre-commit autoupdate
-    - uses: peter-evans/create-pull-request@v4.2.3
+    - id: cpr
+      uses: peter-evans/create-pull-request@v4.2.3
       with:
+        token: ${{ secrets.PAT }}
         add-paths: .pre-commit-config.yaml
         commit-message: '[pre-commit] automatic update'
         title: '[pre-commit] automatic update'
+        branch: 'create-pull-request/pre-commit'
         body: ''
+    - id: mpr
+      if: steps.cpr.outputs.pull-request-operation == 'created'
+      uses: peter-evans/enable-pull-request-automerge@v2
+      with:
+        token: ${{ secrets.PAT }}
+        pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
+        merge-method: squash
+    - id: apr
+      if: steps.cpr.outputs.pull-request-operation == 'created'
+      uses: juliangruber/approve-pull-request-action@v2
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        number: ${{ steps.cpr.outputs.pull-request-number }}
