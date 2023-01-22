@@ -81,6 +81,10 @@ class Split(BaseModel):
 
 @dataclasses.dataclass()
 class Splitter:
+    """
+    Calculate who owes what from a collection of split transactions.
+    """
+
     splits: list[list[Split, ...]] = dataclasses.field(default_factory=list)
 
     @property
@@ -89,7 +93,16 @@ class Splitter:
         """
         The names of all persons taking part across all splits.
         """
-        return tuple(sorted(set(itertools.chain(*(s.Debtors for s in itertools.chain(*self.splits))))))
+        return tuple(
+            sorted(
+                set(
+                    itertools.chain(
+                        *(s.Debtors for s in itertools.chain(*self.splits)),
+                        *(s.Creditors for s in itertools.chain(*self.splits)),
+                    )
+                )
+            )
+        )
 
     @property
     @functools.lru_cache(maxsize=1)
@@ -99,6 +112,7 @@ class Splitter:
         """
         table = self._make_table_from_splits()
         table = self._compute_weights_for_payers(table)
+        table = self._drop_counts_for_all_payers(table)
         table = self._compute_amounts_for_payers(table)
         table = self._compute_pennies_for_payers(table)
         self._validate_table(table)
@@ -110,19 +124,27 @@ class Splitter:
         """
         table = pd.DataFrame(data=[s.dict() for s in itertools.chain(*self.splits)])
         table = table[table.Amount > BROKE].reset_index(drop=True)
-        table["Debtors"] = table["Debtors"].apply(frozenset)
-        table["Creditors"] = table["Creditors"].apply(frozenset)
         return table
 
     def _compute_weights_for_payers(self, table: pd.DataFrame) -> pd.DataFrame:
         """
         Compute weights for individual payees.
         """
+        raise NotImplementedError("this must be fixed to take account of multiple creditors")
         count = pd.DataFrame(iter(table.Debtors.apply(Counter))).fillna(0).astype(int)
         total = count.sum(axis=1)
         for name in self.names:
             count[f"{name}.w"] = count[name] / total
         return pd.concat([table, count], axis=1)
+
+    @staticmethod
+    def _drop_counts_for_all_payers(table: pd.DataFrame) -> pd.DataFrame:
+        """
+        These counts are no longer needed so can be dropped.
+        """
+        table["Debtors"] = table["Debtors"].apply(frozenset)
+        table["Creditors"] = table["Creditors"].apply(frozenset)
+        return table
 
     def _compute_amounts_for_payers(self, table: pd.DataFrame) -> pd.DataFrame:
         """
@@ -211,7 +233,7 @@ class Splitter:
                 Debtors=split.Debtors,
             )
 
-        for amount in tips:
+        for category, amount in tips.items():
             if split.Amount > BROKE:
                 amount = amount if isinstance(amount, Money) else Money(amount, USD)
                 rate = amount.get_amount_in_sub_unit() / split.Amount.get_amount_in_sub_unit()
@@ -224,7 +246,7 @@ class Splitter:
                 Rate=rate,
                 Payee=split.Payee,
                 Creditors=split.Creditors,
-                Category=split.Category,
+                Category=category,
                 Debtors=split.Debtors,
             )
 
@@ -250,8 +272,9 @@ if __name__ == "__main__":
         Amount=1.99,
         Payee="A",
         Category="Food",
-        Creditors="Ethan",
+        Creditors="Ian",
         Debtors={"Adam": 1, "Ethan": 1},
+        tips=dict(TipA=1, TipB=2),
         taxes=dict(SalesTax=0.06, DrinkTax=0.10, OtherTax=0.0),
     )
 
