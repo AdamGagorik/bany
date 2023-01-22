@@ -36,12 +36,12 @@ class Split(BaseModel):
     #: This is the person or persons who paid for the transaction
     Payer: str
     #: This is a mapping from the amount owed for each payer
-    Payers: str | tuple[str, ...] | dict[str, int] = ()
+    Debtors: str | tuple[str, ...] | dict[str, int] = ()
 
-    @validator("Payers", pre=True, always=True)
+    @validator("Debtors", pre=True, always=True)
     def _validate_payers(cls, value: str | tuple[str, ...], values: dict) -> dict[str:int]:
         """
-        Validate creation of Payers field.
+        Validate creation of Debtors field.
         """
         if isinstance(value, str):
             value = (value,)
@@ -78,7 +78,7 @@ class Splitter:
         """
         The names of all persons taking part across all splits.
         """
-        return tuple(sorted(set(itertools.chain(*(s.Payers for s in itertools.chain(*self.splits))))))
+        return tuple(sorted(set(itertools.chain(*(s.Debtors for s in itertools.chain(*self.splits))))))
 
     @property
     @functools.lru_cache(maxsize=1)
@@ -88,7 +88,7 @@ class Splitter:
         """
         table = self._make_table_from_splits()
         count = self._compute_weights_for_payers(table)
-        table["Payers"] = table["Payers"].apply(frozenset)
+        table["Debtors"] = table["Debtors"].apply(frozenset)
         table = pd.concat([table, count], axis=1)
         table = self._compute_amounts_for_payers(table)
         table = self._compute_pennies_for_payers(table)
@@ -106,7 +106,7 @@ class Splitter:
         """
         Compute weights for individual payees.
         """
-        count = pd.DataFrame(iter(table.Payers.apply(Counter))).fillna(0).astype(int)
+        count = pd.DataFrame(iter(table.Debtors.apply(Counter))).fillna(0).astype(int)
         total = count.sum(axis=1)
         for name in self.names:
             count[f"{name}.w"] = count[name] / total
@@ -127,7 +127,7 @@ class Splitter:
         table["Who"] = "-"
         table["Delta"] = BROKE
 
-        for payers, subset in table.groupby(by="Payers"):
+        for payers, subset in table.groupby(by="Debtors"):
             count = Counter({name: 0 for name in self.names if name in payers})
             for index, _ in subset.iterrows():
                 expected = table.loc[index, "Amount"]
@@ -162,7 +162,7 @@ class Splitter:
                 raise ValueError("[%s] %s != %s Δ=%s", index, expected, observed, delta)
 
         # When splitting pennies, the difference should not be greater than 1 penny between members
-        for payers, subset in table.groupby(by="Payers"):
+        for payers, subset in table.groupby(by="Debtors"):
             counts = subset.groupby("Who").Delta.sum()
             select = counts.index.intersection(payers)
             if not select.empty:
@@ -196,7 +196,7 @@ class Splitter:
                 Payee=payee,
                 Payer=split.Payer,
                 Category=split.Category,
-                Payers=split.Payers,
+                Debtors=split.Debtors,
             )
 
         for amount in tips:
@@ -213,7 +213,7 @@ class Splitter:
                 Payee=split.Payee,
                 Payer=split.Payer,
                 Category=split.Category,
-                Payers=split.Payers,
+                Debtors=split.Debtors,
             )
 
     def __hash__(self):
@@ -230,7 +230,7 @@ if __name__ == "__main__":
         Payee="A",
         Category="Food",
         Payer="Ethan",
-        Payers={"Adam": 1, "Ethan": 1},
+        Debtors={"Adam": 1, "Ethan": 1},
         taxes=dict(SalesTax=0.06, DrinkTax=0.10, OtherTax=0.0),
     )
 
@@ -239,7 +239,7 @@ if __name__ == "__main__":
         Payee="A",
         Category="Food",
         Payer="Ethan",
-        Payers={"Adam": 1, "Ethan": 1},
+        Debtors={"Adam": 1, "Ethan": 1},
         taxes=dict(SalesTax=0.06, DrinkTax=0.10, OtherTax=0.0),
     )
 

@@ -22,7 +22,7 @@ def _m(*args) -> Money:
 @pytest.mark.parametrize(
     "inputs,expected",
     [
-        (dict(Amount=1, Payer="A", Payers="A"), dict(Amount=_m(1.00))),
+        (dict(Amount=1, Payer="A", Debtors="A"), dict(Amount=_m(1.00))),
     ],
 )
 def test_create_split(inputs: dict, expected: dict):
@@ -42,8 +42,8 @@ class CheckSplitTableTestData:
     [
         CheckSplitTableTestData(
             splits=(
-                dict(Amount=1, Payer="A", Payers="A", taxes=dict(SalesTax=0.50)),
-                dict(Amount=5, Payer="B", Payers="B", tips=[2]),
+                dict(Amount=1, Payer="A", Debtors="A", taxes=dict(SalesTax=0.50)),
+                dict(Amount=5, Payer="B", Debtors="B", tips=[2]),
             ),
             expect=pd.DataFrame(
                 [
