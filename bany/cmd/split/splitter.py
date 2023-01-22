@@ -34,7 +34,7 @@ class Split(BaseModel):
     #: This is a category for the transaction (Food, Cleaning, etc)
     Category: str = "Unknown"
     #: This is the person or persons who paid for the transaction
-    Payer: str
+    Creditors: str
     #: This is a mapping from the amount owed for each payer
     Debtors: str | tuple[str, ...] | dict[str, int] = ()
 
@@ -49,7 +49,7 @@ class Split(BaseModel):
             value = {v: 1 for v in value}
         if not isinstance(value, dict):
             raise TypeError
-        if (payer := values["Payer"]) not in value:
+        if (payer := values["Creditors"]) not in value:
             value[payer] = 0
         return {k: v for k, v in value.items()}
 
@@ -194,7 +194,7 @@ class Splitter:
                 Amount=(split.Amount * rate).round(2),
                 Rate=rate,
                 Payee=payee,
-                Payer=split.Payer,
+                Creditors=split.Creditors,
                 Category=split.Category,
                 Debtors=split.Debtors,
             )
@@ -211,7 +211,7 @@ class Splitter:
                 Amount=amount,
                 Rate=rate,
                 Payee=split.Payee,
-                Payer=split.Payer,
+                Creditors=split.Creditors,
                 Category=split.Category,
                 Debtors=split.Debtors,
             )
@@ -229,7 +229,7 @@ if __name__ == "__main__":
         Amount=1.99,
         Payee="A",
         Category="Food",
-        Payer="Ethan",
+        Creditors="Ethan",
         Debtors={"Adam": 1, "Ethan": 1},
         taxes=dict(SalesTax=0.06, DrinkTax=0.10, OtherTax=0.0),
     )
@@ -238,7 +238,7 @@ if __name__ == "__main__":
         Amount=1.99,
         Payee="A",
         Category="Food",
-        Payer="Ethan",
+        Creditors="Ethan",
         Debtors={"Adam": 1, "Ethan": 1},
         taxes=dict(SalesTax=0.06, DrinkTax=0.10, OtherTax=0.0),
     )
