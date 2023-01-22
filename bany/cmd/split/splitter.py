@@ -33,13 +33,13 @@ class Split(BaseModel):
     Payee: str = "Unknown"
     #: This is a category for the transaction (Food, Cleaning, etc)
     Category: str = "Unknown"
-    #: This is the person or persons who paid for the transaction
-    Creditors: str
     #: This is a mapping from the amount owed for each payer
     Debtors: str | tuple[str, ...] | dict[str, int] = ()
+    #: This is the person or persons who paid for the transaction
+    Creditors: str | tuple[str, ...] | dict[str, int] = ()
 
     @validator("Debtors", pre=True, always=True)
-    def _validate_payers(cls, value: str | tuple[str, ...], values: dict) -> dict[str:int]:
+    def _validate_debtors(cls, value: str | tuple[str, ...]) -> dict[str:int]:
         """
         Validate creation of Debtors field.
         """
@@ -49,8 +49,19 @@ class Split(BaseModel):
             value = {v: 1 for v in value}
         if not isinstance(value, dict):
             raise TypeError
-        if (payer := values["Creditors"]) not in value:
-            value[payer] = 0
+        return {k: v for k, v in value.items()}
+
+    @validator("Creditors", pre=True, always=True)
+    def _validate_creditors(cls, value: str | tuple[str, ...]) -> dict[str:int]:
+        """
+        Validate creation of Creditors field.
+        """
+        if isinstance(value, str):
+            value = (value,)
+        if isinstance(value, tuple):
+            value = {v: 1 for v in value}
+        if not isinstance(value, dict):
+            raise TypeError
         return {k: v for k, v in value.items()}
 
     @validator("Amount", pre=True, always=True)
@@ -87,9 +98,7 @@ class Splitter:
         Create the table of transactions from the current splits.
         """
         table = self._make_table_from_splits()
-        count = self._compute_weights_for_payers(table)
-        table["Debtors"] = table["Debtors"].apply(frozenset)
-        table = pd.concat([table, count], axis=1)
+        table = self._compute_weights_for_payers(table)
         table = self._compute_amounts_for_payers(table)
         table = self._compute_pennies_for_payers(table)
         self._validate_table(table)
@@ -100,7 +109,10 @@ class Splitter:
         Turn the current splits into a table.
         """
         table = pd.DataFrame(data=[s.dict() for s in itertools.chain(*self.splits)])
-        return table[table.Amount > BROKE].reset_index(drop=True)
+        table = table[table.Amount > BROKE].reset_index(drop=True)
+        table["Debtors"] = table["Debtors"].apply(frozenset)
+        table["Creditors"] = table["Creditors"].apply(frozenset)
+        return table
 
     def _compute_weights_for_payers(self, table: pd.DataFrame) -> pd.DataFrame:
         """
@@ -110,7 +122,7 @@ class Splitter:
         total = count.sum(axis=1)
         for name in self.names:
             count[f"{name}.w"] = count[name] / total
-        return count
+        return pd.concat([table, count], axis=1)
 
     def _compute_amounts_for_payers(self, table: pd.DataFrame) -> pd.DataFrame:
         """
