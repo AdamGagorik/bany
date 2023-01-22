@@ -44,3 +44,8 @@ bany = 'bany.__main__:main'
 
 [tool.poetry-dynamic-versioning]
 enable = true
+
+[tool.pytest.ini_options]
+log_cli = true
+log_cli_level = "INFO"
+log_cli_format = "%(message)s"
