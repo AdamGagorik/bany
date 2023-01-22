@@ -100,7 +100,7 @@ class Splitter:
         Turn the current splits into a table.
         """
         table = pd.DataFrame(data=[s.dict() for s in itertools.chain(*self.splits)])
-        return table[table.Amount > BROKE]
+        return table[table.Amount > BROKE].reset_index(drop=True)
 
     def _compute_weights_for_payers(self, table: pd.DataFrame) -> pd.DataFrame:
         """
@@ -225,6 +225,15 @@ if __name__ == "__main__":
 
     bany.core.config.pandas()
     splitter = Splitter()
+    splitter.append(
+        Amount=1.99,
+        Payee="A",
+        Category="Food",
+        Payer="Ethan",
+        Payers={"Adam": 1, "Ethan": 1},
+        taxes=dict(SalesTax=0.06, DrinkTax=0.10, OtherTax=0.0),
+    )
+
     splitter.append(
         Amount=1.99,
         Payee="A",
