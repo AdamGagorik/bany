@@ -231,7 +231,7 @@ if __name__ == "__main__":
         Category="Food",
         Payer="Ethan",
         Payers={"Adam": 1, "Ethan": 1},
-        tax=dict(SalesTax=0.06, DrinkTax=0.10, OtherTax=0.0),
+        taxes=dict(SalesTax=0.06, DrinkTax=0.10, OtherTax=0.0),
     )
 
     print(splitter.frame, "\n")
