@@ -79,6 +79,31 @@ class Split(BaseModel):
         arbitrary_types_allowed = True
 
 
+@dataclasses.dataclass(slots=True)
+class Tax:
+    """
+    The tax rate associated with a split transaction.
+    """
+    #: When the amount is a tax or tip, this is the 0 to 1 based percentage
+    Rate: float
+    #: This is the entity to which the amount has been paid (Gas Station, Restaurant, etc)
+    Payee: str = "SalesTax"
+
+
+@dataclasses.dataclass(slots=True)
+class Tip:
+    """
+    The tip amount associated with a split transaction.
+    """
+    #: This is the amount of money spent by the payers (could be a total, a tax, or a tip)
+    Amount: int | float | Money
+    #: This is a category for the transaction (Food, Cleaning, etc)
+    Category: str | None = None
+
+    def __post_init__(self):
+        self.Amount = self.Amount if isinstance(self.Amount, Money) else Money(self.Amount, USD)
+
+
 @dataclasses.dataclass()
 class Splitter:
     """
@@ -130,7 +155,7 @@ class Splitter:
         """
         Compute weights for individual payees.
         """
-        raise NotImplementedError("this must be fixed to take account of multiple creditors")
+        # todo: this must be fixed to take account of multiple creditors
         count = pd.DataFrame(iter(table.Debtors.apply(Counter))).fillna(0).astype(int)
         total = count.sum(axis=1)
         for name in self.names:
@@ -205,50 +230,48 @@ class Splitter:
                         if abs(v1 - v2).round(2) > PENNY:
                             raise ValueError(f"{v1} - {v2} > {PENNY}")
 
-    def append(self, **kwargs):
+    def append(self, split: Split, *objs: Tax | Tip):
         """
         Add a group of splits to the tracked splits.
         """
-        tips = kwargs.pop("tips", {})
-        taxes = kwargs.pop("taxes", {})
-        self.splits.append(list(self._extract_tax_and_tip_for_split(split=Split(**kwargs), tips=tips, taxes=taxes)))
+        self.splits.append(list(self._extract_tax_and_tip_for_split(split, *objs)))
 
-    def _extract_tax_and_tip_for_split(self, split: Split, tips: dict, taxes: dict) -> Iterator[Split]:
+    def _extract_tax_and_tip_for_split(self, split: Split, *objs: Tax | Tip) -> Iterator[Split]:
         """
         Explode split into multiple splits using tip and tax information.
         """
         if split.Rate > 0:
             raise NotImplementedError("can not set tip or tax rate of Split directly!")
 
-        yield split.copy(update=dict(Group=len(self.splits)))
+        split = split.copy(update=dict(Group=len(self.splits)))
+        yield split
 
-        for payee, rate in taxes.items():
-            yield Split(
-                Group=len(self.splits),
-                Amount=(split.Amount * rate).round(2),
-                Rate=rate,
-                Payee=payee,
-                Creditors=split.Creditors,
-                Category=split.Category,
-                Debtors=split.Debtors,
-            )
-
-        for category, amount in tips.items():
-            if split.Amount > BROKE:
-                amount = amount if isinstance(amount, Money) else Money(amount, USD)
-                rate = amount.get_amount_in_sub_unit() / split.Amount.get_amount_in_sub_unit()
-            else:
-                rate = 0
-
-            yield Split(
-                Group=len(self.splits),
-                Amount=amount,
-                Rate=rate,
-                Payee=split.Payee,
-                Creditors=split.Creditors,
-                Category=category,
-                Debtors=split.Debtors,
-            )
+        for obj in objs:
+            match obj:
+                case Tax():
+                    amount = (split.Amount * obj.Rate).round(2)
+                    yield Split(
+                        Group=split.Group,
+                        Amount=amount,
+                        Rate=obj.Rate,
+                        Payee=obj.Payee,
+                        Creditors=split.Creditors,
+                        Category=split.Category,
+                        Debtors=split.Debtors,
+                    )
+                case Tip():
+                    rate = obj.Amount.get_amount_in_sub_unit() / split.Amount.get_amount_in_sub_unit()
+                    yield Split(
+                        Group=split.Group,
+                        Amount=obj.Amount,
+                        Rate=rate,
+                        Payee=split.Payee,
+                        Creditors=split.Creditors,
+                        Category=obj.Category,
+                        Debtors=split.Debtors,
+                    )
+                case _:
+                    raise TypeError(type(obj))
 
     def __hash__(self):
         return id(self) + len(self.splits)
@@ -258,24 +281,18 @@ if __name__ == "__main__":
     import bany.core.config
 
     bany.core.config.pandas()
+
     splitter = Splitter()
     splitter.append(
-        Amount=1.99,
-        Payee="A",
-        Category="Food",
-        Creditors="Ethan",
-        Debtors={"Adam": 1, "Ethan": 1},
-        taxes=dict(SalesTax=0.06, DrinkTax=0.10, OtherTax=0.0),
-    )
-
-    splitter.append(
-        Amount=1.99,
-        Payee="A",
-        Category="Food",
-        Creditors="Ian",
-        Debtors={"Adam": 1, "Ethan": 1},
-        tips=dict(TipA=1, TipB=2),
-        taxes=dict(SalesTax=0.06, DrinkTax=0.10, OtherTax=0.0),
+        Split(
+            Amount=1.99,
+            Payee="A",
+            Category="Food",
+            Creditors="Ethan",
+            Debtors={"Adam": 1, "Ethan": 1},
+        ),
+        Tax(Rate=0.06, Payee="SalesTax"),
+        Tip(Amount=0.50, Category="TipA"),
     )
 
     print(splitter.frame, "\n")
