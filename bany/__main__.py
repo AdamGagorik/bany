@@ -9,6 +9,7 @@ from rich.logging import RichHandler
 
 import bany.cmd.extract
 import bany.cmd.solve
+import bany.cmd.split
 from bany.core.logger import console
 from bany.core.logger import logger
 from bany.core.settings import Settings
@@ -40,7 +41,7 @@ def main() -> int:
 
     subparsers = parser.add_subparsers(title="commands")
 
-    for controller in (bany.cmd.extract.Controller, bany.cmd.solve.Controller):
+    for controller in (bany.cmd.extract.Controller, bany.cmd.solve.Controller, bany.cmd.split.Controller):
         subparser = subparsers.add_parser(controller.__module__.split(".")[-2])
         subparser.set_defaults(controller=controller)
         controller.add_args(subparser)
