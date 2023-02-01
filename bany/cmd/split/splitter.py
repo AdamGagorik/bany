@@ -112,6 +112,7 @@ class Splitter:
     Calculate who owes what from a collection of split transactions.
     """
 
+    #: todo change this to a dict from group to list of splits for easier deletion, etc
     splits: list[list[Split, ...]] = dataclasses.field(default_factory=list)
 
     @property
@@ -232,11 +233,34 @@ class Splitter:
                         if abs(v1 - v2).round(2) > PENNY:
                             raise ValueError(f"{v1} - {v2} > {PENNY}")
 
-    def append(self, split: Split, *objs: Tax | Tip):
+    def tax(self, *taxes: Tax, group: int = -1):
+        """
+        Add taxes to a group (the most recent split by default).
+        """
+        split = self.splits[group][0]
+        assert isinstance(split, Split)
+        self.splits[-1].extend(self._extract_tax_and_tip_for_split(split, *taxes))
+
+    def tip(self, *tips: Tip, group: int = -1):
+        """
+        Add tips to a group (the most recent split by default).
+        """
+        split = self.splits[group][0]
+        assert isinstance(split, Split)
+        self.splits[group].extend(self._extract_tax_and_tip_for_split(split, *tips))
+
+    def split(self, split: Split, *objs: Tax | Tip):
         """
         Add a group of splits to the tracked splits.
         """
-        self.splits.append(list(self._extract_tax_and_tip_for_split(split, *objs)))
+        split = split.copy(update=dict(Group=len(self.splits)))
+        self.splits.append([split, *self._extract_tax_and_tip_for_split(split, *objs)])
+
+    def remove(self, *groups: int):
+        """
+        Remove all splits with the given group.
+        """
+        self.splits = [splits for splits in self.splits if not splits[0].Group in groups]
 
     def _extract_tax_and_tip_for_split(self, split: Split, *objs: Tax | Tip) -> Iterator[Split]:
         """
@@ -244,9 +268,6 @@ class Splitter:
         """
         if split.Rate > 0:
             raise NotImplementedError("can not set tip or tax rate of Split directly!")
-
-        split = split.copy(update=dict(Group=len(self.splits)))
-        yield split
 
         for obj in objs:
             match obj:
@@ -276,7 +297,7 @@ class Splitter:
                     raise TypeError(type(obj))
 
     def __hash__(self):
-        return id(self) + len(self.splits)
+        return id(self) + sum(map(len, self.splits))
 
 
 if __name__ == "__main__":
@@ -285,7 +306,7 @@ if __name__ == "__main__":
     bany.core.config.pandas()
 
     splitter = Splitter()
-    splitter.append(
+    splitter.split(
         Split(
             Amount=1.99,
             Payee="A",
