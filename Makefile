@@ -12,6 +12,9 @@ CLEAN_FILES=find .                                 \
                 -type f -name \*.pyc               \
             -or -type f -name .coverage            \
             -or -type d -name __pycache__          \
+            -or -type f -name cache.db             \
+            -or -type f -name cache.db-shm         \
+            -or -type f -name cache.db-wal         \
             -or -type d -name .pytest_cache        \
             -or -type d -name .ipynb_checkpoints   \
           \)                                       \

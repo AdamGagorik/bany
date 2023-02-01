@@ -4,7 +4,7 @@ build-backend = "poetry_dynamic_versioning.backend"
 
 [tool.black]
 line-length = 120
-target-version = ['py39']
+target-version = ['py311']
 
 [tool.isort]
 profile = "black"
@@ -46,3 +46,8 @@ bany = 'bany.__main__:main'
 
 [tool.poetry-dynamic-versioning]
 enable = true
+
+[tool.pytest.ini_options]
+log_cli = true
+log_cli_level = "INFO"
+log_cli_format = "%(message)s"
