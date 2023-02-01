@@ -4,7 +4,7 @@ build-backend = "poetry_dynamic_versioning.backend"
 
 [tool.black]
 line-length = 120
-target-version = ['py39']
+target-version = ['py311']
 
 [tool.isort]
 profile = "black"
