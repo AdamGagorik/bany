@@ -84,6 +84,7 @@ class Tax:
     """
     The tax rate associated with a split transaction.
     """
+
     #: When the amount is a tax or tip, this is the 0 to 1 based percentage
     Rate: float
     #: This is the entity to which the amount has been paid (Gas Station, Restaurant, etc)
@@ -95,6 +96,7 @@ class Tip:
     """
     The tip amount associated with a split transaction.
     """
+
     #: This is the amount of money spent by the payers (could be a total, a tax, or a tip)
     Amount: int | float | Money
     #: This is a category for the transaction (Food, Cleaning, etc)
