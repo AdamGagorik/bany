@@ -112,8 +112,7 @@ class Splitter:
     Calculate who owes what from a collection of split transactions.
     """
 
-    #: todo change this to a dict from group to list of splits for easier deletion, etc
-    splits: list[list[Split, ...]] = dataclasses.field(default_factory=list)
+    splits: dict[int, list[Split, ...]] = dataclasses.field(default_factory=dict)
 
     @property
     @functools.lru_cache(maxsize=1)
@@ -125,8 +124,8 @@ class Splitter:
             sorted(
                 set(
                     itertools.chain(
-                        *(s.Debtors for s in itertools.chain(*self.splits)),
-                        *(s.Creditors for s in itertools.chain(*self.splits)),
+                        *(s.Debtors for s in itertools.chain(*self.splits.values())),
+                        *(s.Creditors for s in itertools.chain(*self.splits.values())),
                     )
                 )
             )
@@ -150,7 +149,7 @@ class Splitter:
         """
         Turn the current splits into a table.
         """
-        table = pd.DataFrame(data=[s.dict() for s in itertools.chain(*self.splits)])
+        table = pd.DataFrame(data=[s.dict() for s in itertools.chain(*self.splits.values())])
         table = table[table.Amount > BROKE].reset_index(drop=True)
         return table
 
@@ -253,14 +252,15 @@ class Splitter:
         """
         Add a group of splits to the tracked splits.
         """
-        split = split.copy(update=dict(Group=len(self.splits)))
-        self.splits.append([split, *self._extract_tax_and_tip_for_split(split, *objs)])
+        group = len(self.splits)
+        split = split.copy(update=dict(Group=group))
+        self.splits[group] = [split, *self._extract_tax_and_tip_for_split(split, *objs)]
 
     def remove(self, *groups: int):
         """
         Remove all splits with the given group.
         """
-        self.splits = [splits for splits in self.splits if not splits[0].Group in groups]
+        self.splits = {g: s for g, s in self.splits.items() if not g in groups}
 
     def _extract_tax_and_tip_for_split(self, split: Split, *objs: Tax | Tip) -> Iterator[Split]:
         """
@@ -297,7 +297,7 @@ class Splitter:
                     raise TypeError(type(obj))
 
     def __hash__(self):
-        return id(self) + sum(map(len, self.splits))
+        return id(self) + len(self.splits) + sum(map(len, self.splits.values()))
 
 
 if __name__ == "__main__":
