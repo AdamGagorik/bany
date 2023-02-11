@@ -242,16 +242,24 @@ class Splitter:
         """
         Add taxes to a group (the most recent split by default).
         """
+        group = list(self.splits.keys())[group]
+
         split = self.splits[group][0]
-        assert isinstance(split, Split)
-        self.splits[-1].extend(self._extract_tax_and_tip_for_split(split, *taxes))
+        if not isinstance(split, Split):
+            raise TypeError(type(split).__name__)
+
+        self.splits[group].extend(self._extract_tax_and_tip_for_split(split, *taxes))
 
     def tip(self, *tips: Tip, group: int = -1):
         """
         Add tips to a group (the most recent split by default).
         """
+        group = list(self.splits.keys())[group]
+
         split = self.splits[group][0]
-        assert isinstance(split, Split)
+        if not isinstance(split, Split):
+            raise TypeError(type(split).__name__)
+
         self.splits[group].extend(self._extract_tax_and_tip_for_split(split, *tips))
 
     def split(self, split: Split, *objs: Tax | Tip):
