@@ -260,7 +260,7 @@ class Splitter:
         """
         Remove all splits with the given group.
         """
-        self.splits = {g: s for g, s in self.splits.items() if not g in groups}
+        self.splits = {g: s for g, s in self.splits.items() if g not in groups}
 
     def _extract_tax_and_tip_for_split(self, split: Split, *objs: Tax | Tip) -> Iterator[Split]:
         """
