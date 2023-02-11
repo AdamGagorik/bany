@@ -47,6 +47,7 @@ class App(Cmd):
         del Cmd.do_run_pyscript
         self.rich_stderr = Console(stderr=True)
         self.rich_stdout = Console(file=self.stdout)
+        self.prompt = "bany > "
 
     def poutput(self, msg: Any = "", *, end: str = "\n") -> None:
         try:
@@ -270,6 +271,12 @@ class SplitTransactions(CommandSet):
         )
         self.splitter.split(split)
         self._display_frame()
+
+    def do_summarize(self, _: Statement):
+        """
+        Group by category and payee to summarize the current transactions.
+        """
+        self._display_frame(frame=self.splitter.summary)
 
     def do_clear(self, _: Statement):
         """

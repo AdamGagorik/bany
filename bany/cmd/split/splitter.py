@@ -282,6 +282,14 @@ class Splitter:
         """
         self.splits = {g: s for g, s in self.splits.items() if g not in groups}
 
+    @property
+    def summary(self) -> pd.DataFrame:
+        """
+        Group by category and payee to summarize the current transactions.
+        """
+        columns = ["amount", "category", "payee", *(f"{n}.$" for n in self.names)]
+        return self.frame.loc[:, columns].groupby(by=["category", "payee"], level=0).sum(numeric_only=False)
+
     def _extract_tax_and_tip_for_split(self, split: Split, *objs: Tax | Tip) -> Iterator[Split]:
         """
         Explode split into multiple splits using tip and tax information.
@@ -339,5 +347,4 @@ if __name__ == "__main__":
     )
 
     print(splitter.frame, "\n")
-    columns = ["amount", "category", "payee", *(f"{n}.$" for n in splitter.names)]
-    print(splitter.frame.loc[:, columns].groupby(by=["category", "payee"], level=0).sum(numeric_only=False))
+    print(splitter.summary)

@@ -103,23 +103,82 @@ This script opens an interactive loop.
 
 ```bash
 bany split
+```
 
-# 0) Show the possible commands
-help
+#### Show the possible commands
 
-# 1) Split some transactions between some people
-split --amount 10.00 --payee GroceryStore --category Food --debit Alice=2/5 Bob=3/5 --credit Bob=1
-split --amount 15.75 --payee Restaurant --category Dinner --debit Alice=1/2 Bob=1/2 --credit Alice=1
+```bash
+bany > help
 
-# 2) Add taxes and tips for the previous transaction
-tip --amount 5.00 --category Tips
-tax --rate 0.07 --payee SalesTax
+Documented commands (use 'help -v' for verbose/'help <topic>' for details):
 
-# 3) Display the current transactions
-show
+My Category
+===========
+clear  delete  show  split  summarize  tax  tip
 
-# 4) Aggregate by categories and people
-summarize
+Uncategorized
+=============
+help  history  quit  set  shortcuts
+```
+
+#### Split some transactions between some people
+
+```bash
+bany > split --amount 10.00 --payee GroceryStore --category Food --debit Alice=2/5 Bob=3/5 --credit Bob=1
+
+   group  amount  rate         payee category       debtors creditors  Alice  Bob  Alice.w  Bob.w Alice.$  Bob.$ Who  Delta
+0      0  $10.00     0  GroceryStore     Food  (Alice, Bob)     (Bob)    400  600      0.4    0.6   $4.00  $6.00   -  $0.00
+
+bany > split --amount 15.75 --payee Restaurant --category Dinner --debit Alice=1/2 Bob=1/2 --credit Alice=1
+
+   group  amount  rate         payee category       debtors creditors  Alice  Bob  Alice.w  Bob.w Alice.$  Bob.$    Who   Delta
+0      0  $10.00     0  GroceryStore     Food  (Alice, Bob)     (Bob)    400  600      0.4    0.6   $4.00  $6.00      -   $0.00
+1      1  $15.75     0    Restaurant   Dinner  (Alice, Bob)   (Alice)    787  787      0.5    0.5   $7.87  $7.88  Alice  -$0.01
+```
+
+#### Add taxes and tips for the previous transaction
+
+```bash
+bany > tip --amount 5.00 --category Tips
+
+   group  amount     rate         payee category       debtors creditors  Alice  Bob  Alice.w  Bob.w Alice.$  Bob.$    Who   Delta
+0      0  $10.00  0.00000  GroceryStore     Food  (Alice, Bob)     (Bob)    400  600      0.4    0.6   $4.00  $6.00      -   $0.00
+1      1  $15.75  0.00000    Restaurant   Dinner  (Alice, Bob)   (Alice)    787  787      0.5    0.5   $7.87  $7.88  Alice  -$0.01
+2      1   $5.00  0.31746    Restaurant     Tips  (Alice, Bob)   (Alice)    250  250      0.5    0.5   $2.50  $2.50      -   $0.00
+```
+
+```bash
+bany > tax --rate 0.07 --payee SalesTax
+
+   group  amount     rate         payee category       debtors creditors  Alice  Bob  Alice.w  Bob.w Alice.$  Bob.$    Who   Delta
+0      0  $10.00  0.00000  GroceryStore     Food  (Alice, Bob)     (Bob)    400  600      0.4    0.6   $4.00  $6.00      -   $0.00
+1      1  $15.75  0.00000    Restaurant   Dinner  (Alice, Bob)   (Alice)    787  787      0.5    0.5   $7.87  $7.88  Alice  -$0.01
+2      1   $5.00  0.31746    Restaurant     Tips  (Alice, Bob)   (Alice)    250  250      0.5    0.5   $2.50  $2.50      -   $0.00
+3      1   $1.10  0.07000      SalesTax   Dinner  (Alice, Bob)   (Alice)     55   55      0.5    0.5   $0.55  $0.55      -   $0.00
+```
+
+#### Display the current transactions
+
+```bash
+bany > show
+
+   group  amount     rate         payee category       debtors creditors  Alice  Bob  Alice.w  Bob.w Alice.$  Bob.$    Who   Delta
+0      0  $10.00  0.00000  GroceryStore     Food  (Alice, Bob)     (Bob)    400  600      0.4    0.6   $4.00  $6.00      -   $0.00
+1      1  $15.75  0.00000    Restaurant   Dinner  (Alice, Bob)   (Alice)    787  787      0.5    0.5   $7.87  $7.88  Alice  -$0.01
+2      1   $5.00  0.31746    Restaurant     Tips  (Alice, Bob)   (Alice)    250  250      0.5    0.5   $2.50  $2.50      -   $0.00
+3      1   $1.10  0.07000      SalesTax   Dinner  (Alice, Bob)   (Alice)     55   55      0.5    0.5   $0.55  $0.55      -   $0.00
+```
+
+#### Aggregate by categories and people
+
+```bash
+bany > summarize
+
+   amount category         payee Alice.$  Bob.$
+0  $10.00     Food  GroceryStore   $4.00  $6.00
+1  $15.75   Dinner    Restaurant   $7.87  $7.88
+2   $5.00     Tips    Restaurant   $2.50  $2.50
+3   $1.10   Dinner      SalesTax   $0.55  $0.55
 ```
 
 ## `bany solve`
