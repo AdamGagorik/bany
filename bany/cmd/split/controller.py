@@ -2,6 +2,7 @@
 Itemize and split a receipt between people.
 """
 import dataclasses
+import functools
 import re
 import sys
 import textwrap
@@ -17,8 +18,6 @@ from cmd2 import CommandSet
 from cmd2 import Statement
 from cmd2 import with_argparser
 from cmd2 import with_default_category
-from moneyed import Money
-from moneyed import USD
 from rich.console import Console
 from rich.prompt import Confirm
 
@@ -27,6 +26,7 @@ from bany.cmd.split.splitter import Split
 from bany.cmd.split.splitter import Splitter
 from bany.cmd.split.splitter import Tax
 from bany.cmd.split.splitter import Tip
+from bany.core.money import as_money
 from bany.core.settings import Settings
 
 
@@ -137,35 +137,27 @@ class KwargsAction(Action):
         return eval(expression, {"__builtins__": None}, {})
 
 
-@with_default_category("My Category")
-class SplitTransactions(CommandSet):
-    """
-    Manage a list of split transactions.
-    """
+@functools.lru_cache(maxsize=1)
+def tax_parser() -> ArgumentParser:
+    parser = Cmd2ArgumentParser(description="Add a tax to the previous split.")
+    parser.add_argument("-g", "--groups", type=int, nargs="*", default=[-1], help="the groups to modify (see table)")
+    parser.add_argument("-p", "--payee", type=str, default="SalesTax", help="the entity being paid $$$")
+    parser.add_argument("-r", "--rate", type=float, required=True, help="the tax percentage")
+    return parser
 
-    def __init__(self):
-        super().__init__()
-        self.splitter = Splitter()
 
-    def do_tax(self, _: Statement):
-        """
-        Add a tax to the previous split.
-        """
-        self.splitter.tax(Tax(rate=0.06, payee="SalesTax"))
+@functools.lru_cache(maxsize=1)
+def tip_parser() -> ArgumentParser:
+    parser = Cmd2ArgumentParser(description="Add a tip to the previous split.")
+    parser.add_argument("-g", "--groups", type=int, nargs="*", default=[-1], help="the groups to modify (see table)")
+    parser.add_argument("-a", "--amount", type=as_money, required=True, help="the amount of $$$ being tipped")
+    parser.add_argument("-C", "--category", type=str, default="Tip", help="the tip's category")
+    return parser
 
-    def do_tip(self, _: Statement):
-        """
-        Add a tip to the previous split.
-        """
-        self.splitter.tip(Tip(amount=5.00, category="TipA"))
 
-    def do_show(self, _: Statement):
-        """
-        Show the current split transactions.
-        """
-        self._display_frame()
-
-    _split_parser = Cmd2ArgumentParser(
+@functools.lru_cache(maxsize=1)
+def split_parser() -> ArgumentParser:
+    parser = Cmd2ArgumentParser(
         description="Add a split transaction with associated tips and taxes.",
         epilog=textwrap.dedent(
             # fmt: off
@@ -183,10 +175,10 @@ class SplitTransactions(CommandSet):
             # fmt: on
         ),
     )
-    _split_parser.add_argument("-a", "--amount", type=lambda v: Money(v, USD), help="the amount of $$$ being split")
-    _split_parser.add_argument("-p", "--payee", type=str, default="Restaurant", help="the entity being paid $$$")
-    _split_parser.add_argument("-C", "--category", type=str, default="Food", help="the transaction's category")
-    _split_parser.add_argument(
+    parser.add_argument("-a", "--amount", type=as_money, required=True, help="the amount of $$$ being split")
+    parser.add_argument("-p", "--payee", type=str, default="Restaurant", help="the entity being paid $$$")
+    parser.add_argument("-C", "--category", type=str, default="Food", help="the transaction's category")
+    parser.add_argument(
         "-d",
         "--debit",
         type=str,
@@ -195,7 +187,7 @@ class SplitTransactions(CommandSet):
         metavar="A=100",
         help="a mapping from people to the amounts they owe",
     )
-    _split_parser.add_argument(
+    parser.add_argument(
         "-c",
         "--credit",
         type=str,
@@ -204,8 +196,45 @@ class SplitTransactions(CommandSet):
         metavar="B=200",
         help="a mapping from people to the amounts they paid",
     )
+    return parser
 
-    @with_argparser(_split_parser)
+
+@functools.lru_cache(maxsize=1)
+def delete_parser() -> ArgumentParser:
+    parser = Cmd2ArgumentParser(description="Remove specific split transactions.")
+    parser.add_argument("-g", "--groups", type=int, nargs="*", default=[-1], help="the groups to modify (see table)")
+    return parser
+
+
+@with_default_category("My Category")
+class SplitTransactions(CommandSet):
+    """
+    Manage a list of split transactions.
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.splitter = Splitter()
+
+    @with_argparser(tax_parser())
+    def do_tax(self, opts: Namespace):
+        for group in opts.groups:
+            self.splitter.tax(Tax(rate=opts.rate, payee=opts.payee))
+        self._display_frame()
+
+    @with_argparser(tip_parser())
+    def do_tip(self, opts: Namespace):
+        for group in opts.groups:
+            self.splitter.tip(Tip(amount=opts.amount, category=opts.category))
+        self._display_frame()
+
+    def do_show(self, _: Statement):
+        """
+        Show the current split transactions.
+        """
+        self._display_frame()
+
+    @with_argparser(split_parser())
     def do_split(self, opts: Namespace):
         """
         Add a split transaction with associated tips and taxes.
@@ -232,18 +261,15 @@ class SplitTransactions(CommandSet):
             self.splitter.clear()
             self._cmd.poutput("[red underline]all transactions removed!")
 
-    _delete_parser = Cmd2ArgumentParser(description="Remove specific split transactions.")
-    _delete_parser.add_argument(
-        "--groups", type=int, nargs="*", required=True, help="delete all split transactions for group?"
-    )
-
-    @with_argparser(_delete_parser)
+    @with_argparser(delete_parser())
     def do_delete(self, opts: Namespace):
         if not self.splitter.splits:
             self._cmd.perror("no transactions to delete!")
             return
 
         if opts.groups is not None:
+            keys = list(self.splitter.splits.keys())
+            opts.groups = [keys[group] for group in keys]
             subset = self.splitter.frame.loc[self.splitter.frame["group"].isin(opts.groups), :]
             if not subset.empty:
                 self._display_frame(subset)
