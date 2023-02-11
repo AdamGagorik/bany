@@ -210,15 +210,14 @@ class SplitTransactions(CommandSet):
         """
         Add a split transaction with associated tips and taxes.
         """
-        self.splitter.split(
-            Split(
-                amount=opts.amount,
-                payee=opts.payee,
-                category=opts.category,
-                creditors=opts.credit,
-                debtors=opts.debit,
-            ),
+        split = Split(
+            amount=opts.amount,
+            payee=opts.payee,
+            category=opts.category,
+            creditors=opts.credit,
+            debtors=opts.debit,
         )
+        self.splitter.split(split)
         self._display_frame()
 
     def do_clear(self, _: Statement):
@@ -230,7 +229,7 @@ class SplitTransactions(CommandSet):
             return
 
         if Confirm.ask("Remove all transactions?"):
-            self.splitter.splits = []
+            self.splitter.clear()
             self._cmd.poutput("[red underline]all transactions removed!")
 
     _delete_parser = Cmd2ArgumentParser(description="Remove specific split transactions.")
@@ -245,7 +244,7 @@ class SplitTransactions(CommandSet):
             return
 
         if opts.groups is not None:
-            subset = self.splitter.frame.loc[self.splitter.frame["Group"].isin(opts.groups), :]
+            subset = self.splitter.frame.loc[self.splitter.frame["group"].isin(opts.groups), :]
             if not subset.empty:
                 self._display_frame(subset)
                 if Confirm.ask("Remove transactions for group?"):
