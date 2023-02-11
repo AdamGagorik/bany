@@ -4,6 +4,9 @@ Helper functions for Money.
 import decimal
 import itertools
 
+from moneyed import Money
+from moneyed import USD
+
 
 def moneyfmt(value, *values, width: int = 12, decimals: int = 2) -> str:
     """
@@ -27,3 +30,12 @@ def moneyfmt(value, *values, width: int = 12, decimals: int = 2) -> str:
         )
     else:
         return "{:>{width},}".format(decimal.Decimal(value).quantize(cent, decimal.ROUND_HALF_UP), width=width)
+
+
+def as_money(v: float | int | str | Money) -> Money:
+    """
+    Convert object to USD.
+    """
+    if not isinstance(v, Money):
+        return Money(v, USD)
+    return v
