@@ -139,7 +139,18 @@ class KwargsAction(Action):
 
 @functools.lru_cache(maxsize=1)
 def tax_parser() -> ArgumentParser:
-    parser = Cmd2ArgumentParser(description="Add a tax to the previous split.")
+    parser = Cmd2ArgumentParser(
+        description="Add a tax to the previous split.",
+        epilog=textwrap.dedent(
+            # fmt: off
+            r"""
+              examples:
+                # Add tax to the most recently added split.
+                tax --group -1 --payee SalesTax --rate 0.06
+            """[1:-1]
+            # fmt: on
+        ),
+    )
     parser.add_argument("-g", "--groups", type=int, nargs="*", default=[-1], help="the groups to modify (see table)")
     parser.add_argument("-p", "--payee", type=str, default="SalesTax", help="the entity being paid $$$")
     parser.add_argument("-r", "--rate", type=float, required=True, help="the tax percentage")
@@ -148,7 +159,18 @@ def tax_parser() -> ArgumentParser:
 
 @functools.lru_cache(maxsize=1)
 def tip_parser() -> ArgumentParser:
-    parser = Cmd2ArgumentParser(description="Add a tip to the previous split.")
+    parser = Cmd2ArgumentParser(
+        description="Add a tip to the previous split.",
+        epilog=textwrap.dedent(
+            # fmt: off
+            r"""
+              examples:
+                # Add tip to the most recently added split.
+                tax --group -1 --category Tip --amount 5.00
+            """[1:-1]
+            # fmt: on
+        ),
+    )
     parser.add_argument("-g", "--groups", type=int, nargs="*", default=[-1], help="the groups to modify (see table)")
     parser.add_argument("-a", "--amount", type=as_money, required=True, help="the amount of $$$ being tipped")
     parser.add_argument("-C", "--category", type=str, default="Tip", help="the tip's category")
