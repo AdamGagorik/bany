@@ -34,12 +34,12 @@ class Split(BaseModel):
     #: This is a category for the transaction (Food, Cleaning, etc)
     category: str = "Unknown"
     #: This is a mapping from the amount owed for each payer
-    debtors: str | tuple[str, ...] | dict[str, int] = ()
+    debtors: str | tuple[str, ...] | dict[str, int | float] = ()
     #: This is the person or persons who paid for the transaction
-    creditors: str | tuple[str, ...] | dict[str, int] = ()
+    creditors: str | tuple[str, ...] | dict[str, int | float] = ()
 
     @validator("debtors", pre=True, always=True)
-    def _validate_debtors(cls, value: str | tuple[str, ...]) -> dict[str:int]:
+    def _validate_debtors(cls, value: str | tuple[str, ...], values: dict) -> dict[str:int]:
         """
         Validate creation of debtors field.
         """
@@ -49,10 +49,13 @@ class Split(BaseModel):
             value = {v: 1 for v in value}
         if not isinstance(value, dict):
             raise TypeError
-        return {k: v for k, v in value.items()}
+
+        total = sum(value.values())
+        amount = values["amount"].get_amount_in_sub_unit()
+        return {k: v / total * amount for k, v in value.items()}
 
     @validator("creditors", pre=True, always=True)
-    def _validate_creditors(cls, value: str | tuple[str, ...]) -> dict[str:int]:
+    def _validate_creditors(cls, value: str | tuple[str, ...], values: dict) -> dict[str:int]:
         """
         Validate creation of creditors field.
         """
@@ -62,7 +65,10 @@ class Split(BaseModel):
             value = {v: 1 for v in value}
         if not isinstance(value, dict):
             raise TypeError
-        return {k: v for k, v in value.items()}
+
+        total = sum(value.values())
+        amount = values["amount"].get_amount_in_sub_unit()
+        return {k: v / total * amount for k, v in value.items()}
 
     @validator("amount", pre=True, always=True)
     def _validate_amounts(cls, value: int | float | Money) -> Money:
@@ -255,6 +261,12 @@ class Splitter:
         group = len(self.splits)
         split = split.copy(update=dict(group=group))
         self.splits[group] = [split, *self._extract_tax_and_tip_for_split(split, *objs)]
+
+    def clear(self):
+        """
+        Remove all splits for all groups.
+        """
+        self.splits = {}
 
     def remove(self, *groups: int):
         """
