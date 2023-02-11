@@ -93,6 +93,35 @@ transactions:
 
 ```
 
+## `bany split`
+
+This is a script to help split transactions between multiple people.
+
+### Examples
+
+This script opens an interactive loop.
+
+```bash
+bany split
+
+# 0) Show the possible commands
+help
+
+# 1) Split some transactions between some people
+split --amount 10.00 --payee GroceryStore --category Food --debit Alice=2/5 Bob=3/5 --credit Bob=1
+split --amount 15.75 --payee Restaurant --category Dinner --debit Alice=1/2 Bob=1/2 --credit Alice=1
+
+# 2) Add taxes and tips for the previous transaction
+tip --amount 5.00 --category Tips
+tax --rate 0.07 --payee SalesTax
+
+# 3) Display the current transactions
+show
+
+# 4) Aggregate by categories and people
+summarize
+```
+
 ## `bany solve`
 
 This is a script to solve a math problem.
