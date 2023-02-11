@@ -13,6 +13,8 @@ from moneyed import USD
 from pydantic import BaseModel
 from pydantic import validator
 
+from bany.core.money import as_money
+
 
 BROKE = Money(0.00, USD)
 PENNY = Money(0.01, USD)
@@ -75,9 +77,7 @@ class Split(BaseModel):
         """
         Validate creation of Money Field.
         """
-        if not isinstance(value, Money):
-            return Money(value, USD)
-        return value
+        return as_money(value)
 
     class Config:
         extra = "forbid"
