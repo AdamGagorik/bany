@@ -64,6 +64,46 @@ class App(Cmd):
             super().pexcept(msg, end=end, apply_style=apply_style)
 
 
+def safe_eval(expression: str) -> int | float:
+    """
+    Evaluate simple math expression.
+    """
+    # value must only contain numbers and operations
+    for char in expression:
+        if char not in "0123456789+-*(). /":
+            raise ValueError(f"invalid character in value: {char}")
+
+    # disable all builtin names in for value
+    code = compile(expression, "<string>", "eval")
+    if code.co_names:
+        raise NameError("Use of names not allowed")
+
+    return eval(expression, {"__builtins__": None}, {})
+
+
+class MoneyAction(Action):
+    """
+    Parse an expression with simple math into a Money instance.
+    """
+
+    def __call__(self, parser: ArgumentParser, namespace: Namespace, values: list[str], option_string: str = None):
+        """
+        Parse the values expression and update the destination.
+        """
+        expr = " ".join(map(str.strip, values))
+        value = safe_eval(expr)
+
+        # value must be a number
+        if not isinstance(value, (float, int)):
+            raise TypeError(f"expecting int or float for {option_string} {expr}")
+
+        # value should be positive definite
+        if not value >= 0:
+            raise ValueError(f"expecting positive definite value for {option_string} {expr}")
+
+        setattr(namespace, self.dest, as_money(value))
+
+
 class KwargsAction(Action):
     """
     Parse value of the form key = numeric expression.
@@ -100,7 +140,7 @@ class KwargsAction(Action):
             for other in lut:
                 value = str(value).replace(other, str(lut[other]))
 
-            value = self._safe_eval(value)
+            value = safe_eval(value)
 
             # value must be a number
             if not isinstance(value, (float, int)):
@@ -120,23 +160,6 @@ class KwargsAction(Action):
         Turn `A=1 B=2` into `A=1, B=2`.
         """
         return self._REGEX_INSERT_COMMA.sub(r"\g<1>, \g<2>", expression)
-
-    @staticmethod
-    def _safe_eval(expression: str) -> int | float:
-        """
-        Evaluate simple math expression.
-        """
-        # value must only contain numbers and operations
-        for char in expression:
-            if char not in "0123456789+-*(). /":
-                raise ValueError(f"invalid character in value: {char}")
-
-        # disable all builtin names in for value
-        code = compile(expression, "<string>", "eval")
-        if code.co_names:
-            raise NameError("Use of names not allowed")
-
-        return eval(expression, {"__builtins__": None}, {})
 
 
 @functools.lru_cache(maxsize=1)
@@ -174,7 +197,16 @@ def tip_parser() -> ArgumentParser:
         ),
     )
     parser.add_argument("-g", "--groups", type=int, nargs="*", default=[-1], help="the groups to modify (see table)")
-    parser.add_argument("-a", "--amount", type=as_money, required=True, help="the amount of $$$ being tipped")
+    parser.add_argument(
+        "-a",
+        "--amount",
+        type=str,
+        nargs="*",
+        action=MoneyAction,
+        required=True,
+        metavar="EXPRESSION",
+        help="the amount of $$$ being tipped",
+    )
     parser.add_argument("-C", "--category", type=str, default="Tip", help="the tip's category")
     return parser
 
@@ -199,7 +231,16 @@ def split_parser() -> ArgumentParser:
             # fmt: on
         ),
     )
-    parser.add_argument("-a", "--amount", type=as_money, required=True, help="the amount of $$$ being split")
+    parser.add_argument(
+        "-a",
+        "--amount",
+        type=str,
+        nargs="*",
+        action=MoneyAction,
+        required=True,
+        metavar="EXPRESSION",
+        help="the amount of $$$ being split",
+    )
     parser.add_argument("-p", "--payee", type=str, default="Restaurant", help="the entity being paid $$$")
     parser.add_argument("-C", "--category", type=str, default="Food", help="the transaction's category")
     parser.add_argument(
