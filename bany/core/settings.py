@@ -5,7 +5,7 @@ from pydantic import SecretStr
 
 class Settings(BaseSettings):
     YNAB_API_URL: AnyUrl = "https://api.youneedabudget.com/v1"
-    YNAB_API_KEY: SecretStr
+    YNAB_API_KEY: SecretStr = ""
 
     class Config:
         env_file = ".env"

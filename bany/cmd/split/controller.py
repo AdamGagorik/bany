@@ -283,20 +283,32 @@ class SplitTransactions(CommandSet):
 
     @with_argparser(tax_parser())
     def do_tax(self, opts: Namespace):
+        if not self.splitter.splits:
+            self._cmd.perror("no transactions to tax!")
+            return
+
         for group in opts.groups:
+            self._cmd.poutput(f"[red underline]tax group [{group:>3}] at: {opts.rate*100:6.2f}%")
             self.splitter.tax(Tax(rate=opts.rate, payee=opts.payee))
-        self._display_frame()
 
     @with_argparser(tip_parser())
     def do_tip(self, opts: Namespace):
+        if not self.splitter.splits:
+            self._cmd.perror("no transactions to tip!")
+            return
+
         for group in opts.groups:
+            self._cmd.poutput(f"[red underline]tip group [{group:>3}] at: {str(opts.amount):>7}")
             self.splitter.tip(Tip(amount=opts.amount, category=opts.category))
-        self._display_frame()
 
     def do_show(self, _: Statement):
         """
         Show the current split transactions.
         """
+        if not self.splitter.splits:
+            self._cmd.perror("no transactions to display!")
+            return
+
         self._display_frame()
 
     @with_argparser(split_parser())
@@ -311,13 +323,17 @@ class SplitTransactions(CommandSet):
             creditors=opts.credit,
             debtors=opts.debit,
         )
-        self.splitter.split(split)
-        self._display_frame()
+        group = self.splitter.split(split)
+        self._cmd.poutput(f"[red underline]add group [{group:>3}] at: {str(opts.amount):>7}")
 
     def do_summarize(self, _: Statement):
         """
         Group by category and payee to summarize the current transactions.
         """
+        if not self.splitter.splits:
+            self._cmd.perror("no transactions to summarize!")
+            return
+
         self._display_frame(frame=self.splitter.summary)
 
     def do_clear(self, _: Statement):
@@ -357,9 +373,10 @@ class SplitTransactions(CommandSet):
         if frame is None:
             if self.splitter.splits:
                 frame = self.splitter.frame
-            else:
-                self._cmd.perror("no transactions to display")
-                return
+
+        if frame is None or frame.empty:
+            self._cmd.perror("no frame to display")
+            return
 
         self._cmd.poutput(frame)
 
