@@ -105,6 +105,20 @@ This script opens an interactive loop.
 bany split
 ```
 
+#### Run a series of commands
+
+You can run a series of commands defined in a text file.
+
+```text
+split -a 12.79 -p Costco -C Food -d Dad=1 Adam=0   Doug=0   -c Adam=1
+split -a  7.49 -p Costco -C Food -d Dad=1 Adam=0   Doug=0   -c Adam=1
+summarize
+```
+
+```bash
+bany > @ costco.txt
+```
+
 #### Show the possible commands
 
 ```bash

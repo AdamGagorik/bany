@@ -36,14 +36,15 @@ class App(Cmd):
     """
 
     def __init__(self):
-        super().__init__(allow_cli_args=False, shortcuts={"?": "help"}, command_sets=[SplitTransactions()])
+        super().__init__(
+            allow_cli_args=False, shortcuts={"?": "help", "@": "run_script"}, command_sets=[SplitTransactions()]
+        )
         del Cmd.do_py
         del Cmd.do_ipy
         del Cmd.do_edit
         del Cmd.do_shell
         del Cmd.do_macro
         del Cmd.do_alias
-        del Cmd.do_run_script
         del Cmd.do_run_pyscript
         self.rich_stderr = Console(stderr=True)
         self.rich_stdout = Console(file=self.stdout)
