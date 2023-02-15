@@ -17,6 +17,9 @@ version = "0.0.0"
 description = ""
 authors = ["Adam Gagorik <adam.gagorik@gmail.com>"]
 readme = "README.md"
+license = "WTFPL"
+repository = "https://github.com/AdamGagorik/bany"
+keywords = ["YNAB", "finance", "budgeting"]
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"
