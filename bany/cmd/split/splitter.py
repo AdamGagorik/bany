@@ -262,13 +262,14 @@ class Splitter:
 
         self.splits[group].extend(self._extract_tax_and_tip_for_split(split, *tips))
 
-    def split(self, split: Split, *objs: Tax | Tip):
+    def split(self, split: Split, *objs: Tax | Tip) -> int:
         """
         Add a group of splits to the tracked splits.
         """
         group = len(self.splits)
         split = split.copy(update=dict(group=group))
         self.splits[group] = [split, *self._extract_tax_and_tip_for_split(split, *objs)]
+        return group
 
     def clear(self):
         """
