@@ -288,7 +288,9 @@ class Splitter:
         Group by category and payee to summarize the current transactions.
         """
         columns = ["amount", "category", "payee", *(f"{n}.$" for n in self.names)]
-        return self.frame.loc[:, columns].groupby(by=["category", "payee"], level=0).sum(numeric_only=False)
+        summary = self.frame.loc[:, columns].groupby(by=["category", "payee"]).sum(numeric_only=False)
+        summary = pd.concat([summary, summary.sum(axis=0).to_frame(("Total", "")).T])
+        return summary
 
     def _extract_tax_and_tip_for_split(self, split: Split, *objs: Tax | Tip) -> Iterator[Split]:
         """
