@@ -32,11 +32,13 @@ def main() -> int:
     pd.set_option("display.max_rows", 512)
     pd.set_option("display.max_columns", 512)
 
+    env = Settings()
     parser = ArgumentParser(
         usage=f"{Path(__file__).parent.name}",
         description=__doc__,
         parents=[parent],
         formatter_class=RawTextHelpFormatter,
+        epilog=f"environment:\n{env.json(indent=2)}",
     )
 
     subparsers = parser.add_subparsers(title="commands")
@@ -51,7 +53,7 @@ def main() -> int:
     if hasattr(opts, "controller"):
         # noinspection PyBroadException
         try:
-            opts.controller(environ=Settings(), options=opts)()
+            opts.controller(environ=env, options=opts)()
             return 0
         except Exception:
             logger.exception("caught unhandled exception!")
