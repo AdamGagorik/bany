@@ -924,14 +924,14 @@ image = ["Pillow"]
 
 [[package]]
 name = "pdfplumber"
-version = "0.7.6"
+version = "0.9.0"
 description = "Plumb a PDF for detailed information about each char, rectangle, and line."
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "pdfplumber-0.7.6-py3-none-any.whl", hash = "sha256:e128fbd8489b4446d37865cd7655aa8d6b1aea9f0057f92101dc6600f0871b7b"},
-    {file = "pdfplumber-0.7.6.tar.gz", hash = "sha256:a69bcc2a7eba5a2ca3171629dc33f1e08976175e98c8482d028fc6c3f644ec18"},
+    {file = "pdfplumber-0.9.0-py3-none-any.whl", hash = "sha256:b396f2919670eb863124f649a907dc846c8653bbb6ba8024fe274952de121077"},
+    {file = "pdfplumber-0.9.0.tar.gz", hash = "sha256:a43a213e125ed72b2358c0d3428f9b72f83939109ec33b77ef9325eeab9846f0"},
 ]
 
 [package.dependencies]
@@ -1981,4 +1981,4 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.12"
-content-hash = "e320389d9d0f277c58ef0444329eea695a6e1b4f3e010fd3a9506a6d39f3b61b"
+content-hash = "bc17ba0e0dae0ee1f12ef71b1b107741cccbc881d2a008c939b6f7390210daa9"
