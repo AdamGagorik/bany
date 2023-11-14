@@ -5,7 +5,7 @@ from json import JSONDecodeError
 
 import requests
 from pydantic import AnyUrl
-from pydantic import parse_obj_as
+from pydantic import TypeAdapter
 from requests import HTTPError
 from requests import Response
 
@@ -32,7 +32,7 @@ class YNAB:
 
     def _make_url(self, *components: AnyUrl | str) -> AnyUrl:
         url = posixpath.join(*(str(c).lstrip("/") for c in itertools.chain((self.environ.YNAB_API_URL,), components)))
-        return parse_obj_as(AnyUrl, url)
+        return TypeAdapter(AnyUrl).validate_python(url)
 
     def _make_headers(self, **kwargs):
         return dict(Authorization=f"Bearer {self.environ.YNAB_API_KEY.get_secret_value()}") | kwargs
@@ -40,7 +40,7 @@ class YNAB:
     def _make_request(self, method: str, endpoint: str, **kwargs) -> Response:
         url = self._make_url(endpoint)
         headers = self._make_headers(**kwargs.pop("headers", {}))
-        response = requests.request(method, url, headers=headers, **kwargs)
+        response = requests.request(method, str(url), headers=headers, **kwargs)
         try:
             response.raise_for_status()
             return response

@@ -3,8 +3,10 @@ from datetime import date
 from typing import Literal
 
 from pydantic import BaseModel
+from pydantic import ConfigDict
 from pydantic import Field
-from pydantic import validator
+from pydantic import field_validator
+from pydantic import ValidationInfo
 
 
 NS = uuid.UUID("b9b024c9-e918-4447-9b75-2b340535d49e")
@@ -32,17 +34,13 @@ class Transaction(BaseModel):
     approved: bool = False
 
     import_index: int = Field(default=0, exclude=True, repr=False)
-    import_id: str | None = Field(repr=False)
+    import_id: str | None = Field(None, repr=False, validate_default=True)
+    model_config = ConfigDict(extra="forbid", frozen=True)
 
-    class Config:
-        extra = "forbid"
-        allow_mutation = False
-
-    # noinspection PyMethodParameters
-    @validator("import_id", pre=True, always=True)
-    def _set_import_id(cls, v, values):
+    @field_validator("import_id", mode="before")
+    def _set_import_id(cls, v, values: ValidationInfo):
         v = v if v is not None else "{account_id}:{date}:{amount}:{payee_name}:{import_index}"
-        return str(uuid.uuid5(NS, v.format(**values)))
+        return str(uuid.uuid5(NS, v.format(**values.data)))
 
     def __hash__(self):
         return hash(self.import_id)
@@ -50,6 +48,4 @@ class Transaction(BaseModel):
 
 class Transactions(BaseModel):
     transactions: list[Transaction]
-
-    class Config:
-        allow_mutation = False
+    model_config = ConfigDict(frozen=True)

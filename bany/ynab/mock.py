@@ -28,7 +28,7 @@ class MockYNAB(YNAB):
         with responses.RequestsMock() as mocker:
             mocker.add(
                 method=method,
-                url=self._make_url(endpoint),
+                url=str(self._make_url(endpoint)),
                 headers=self._make_headers(**kwargs.pop("headers", {})),
                 **self.mockdata.get(endpoint, {}),
             )

@@ -11,7 +11,10 @@ import pandas as pd
 from moneyed import Money
 from moneyed import USD
 from pydantic import BaseModel
-from pydantic import validator
+from pydantic import ConfigDict
+from pydantic import Field
+from pydantic import field_validator
+from pydantic import ValidationInfo
 
 from bany.core.money import as_money
 
@@ -36,12 +39,12 @@ class Split(BaseModel):
     #: This is a category for the transaction (Food, Cleaning, etc)
     category: str = "Unknown"
     #: This is a mapping from the amount owed for each payer
-    debtors: str | tuple[str, ...] | dict[str, int | float] = ()
+    debtors: str | tuple[str, ...] | dict[str, int | float] = Field(default=(), validate_default=True)
     #: This is the person or persons who paid for the transaction
-    creditors: str | tuple[str, ...] | dict[str, int | float] = ()
+    creditors: str | tuple[str, ...] | dict[str, int | float] = Field(default=(), validate_default=True)
 
-    @validator("debtors", pre=True, always=True)
-    def _validate_debtors(cls, value: str | tuple[str, ...], values: dict) -> dict[str:int]:
+    @field_validator("debtors", mode="before")
+    def _validate_debtors(cls, value: str | tuple[str, ...], info: ValidationInfo) -> dict[str:int]:
         """
         Validate creation of debtors field.
         """
@@ -53,11 +56,11 @@ class Split(BaseModel):
             raise TypeError
 
         total = sum(value.values())
-        amount = values["amount"].get_amount_in_sub_unit()
+        amount = info.data["amount"].get_amount_in_sub_unit()
         return {k: v / total * amount for k, v in value.items()}
 
-    @validator("creditors", pre=True, always=True)
-    def _validate_creditors(cls, value: str | tuple[str, ...], values: dict) -> dict[str:int]:
+    @field_validator("creditors", mode="before")
+    def _validate_creditors(cls, value: str | tuple[str, ...], info: ValidationInfo) -> dict[str:int]:
         """
         Validate creation of creditors field.
         """
@@ -69,20 +72,17 @@ class Split(BaseModel):
             raise TypeError
 
         total = sum(value.values())
-        amount = values["amount"].get_amount_in_sub_unit()
+        amount = info.data["amount"].get_amount_in_sub_unit()
         return {k: v / total * amount for k, v in value.items()}
 
-    @validator("amount", pre=True, always=True)
+    @field_validator("amount", mode="before")
     def _validate_amounts(cls, value: int | float | Money) -> Money:
         """
         Validate creation of Money Field.
         """
         return as_money(value)
 
-    class Config:
-        extra = "forbid"
-        validate_assignment = True
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(extra="forbid", validate_assignment=True, arbitrary_types_allowed=True)
 
 
 @dataclasses.dataclass(slots=True)
@@ -167,7 +167,10 @@ class Splitter:
         count = pd.DataFrame(iter(table.debtors.apply(Counter))).fillna(0).astype(int)
         total = count.sum(axis=1)
         for name in self.names:
-            count[f"{name}.w"] = count[name] / total
+            try:
+                count[f"{name}.w"] = count[name] / total
+            except KeyError:
+                count[f"{name}.w"] = 0.0
         return pd.concat([table, count], axis=1)
 
     @staticmethod
@@ -267,7 +270,7 @@ class Splitter:
         Add a group of splits to the tracked splits.
         """
         group = len(self.splits)
-        split = split.copy(update=dict(group=group))
+        split = split.model_copy(update=dict(group=group))
         self.splits[group] = [split, *self._extract_tax_and_tip_for_split(split, *objs)]
         return group
 
