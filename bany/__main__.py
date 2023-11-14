@@ -38,7 +38,7 @@ def main() -> int:
         description=__doc__,
         parents=[parent],
         formatter_class=RawTextHelpFormatter,
-        epilog=f"environment:\n{env.json(indent=2)}",
+        epilog=f"environment:\n{env.model_dump_json(indent=2)}",
     )
 
     subparsers = parser.add_subparsers(title="commands")
