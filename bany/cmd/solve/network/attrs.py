@@ -5,7 +5,7 @@ import dataclasses
 import typing
 
 # common formats
-FORMAT_VALUE: str = "[{:9,.2f}]"
+FORMAT_VALUE: str = "[{:10,.2f}]"
 FORMAT_RATIO: str = "[{:5,.3f}]"
 
 # filter constants

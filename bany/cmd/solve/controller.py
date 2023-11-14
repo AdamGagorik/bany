@@ -63,7 +63,7 @@ class Controller(BaseController):
 
         kwargs = SOLVERS[self.options.solver](step_size=self.options.step_size)
         solved: nx.DiGraph = solve(graph, inplace=False, **kwargs)
-        visualize.log("solved", graph, **visualize.FORMATS_OUT)
+        visualize.log("solved", solved, **visualize.FORMATS_OUT)
 
         self._display_results(solved, kvfmt=f"%-{max(15, max(len(n) for n in solved.nodes))}s: %s")
 
