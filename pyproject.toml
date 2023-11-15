@@ -14,13 +14,7 @@ lines_after_imports = 2
 [tool.poetry]
 name = "bany"
 version = "1.2.2.post36.dev0+84e7fc0"
-description = '''
-A collection of scripts to...
-
-1) Convert text in a PDF into YNAB transactions
-2) Split a series of transactions between people
-3) Solve the constrained partitioning problem for investing
-'''
+description = "A collection of scripts for personal finance"
 authors = ["Adam Gagorik <adam.gagorik@gmail.com>"]
 readme = "README.md"
 license = "WTFPL"
