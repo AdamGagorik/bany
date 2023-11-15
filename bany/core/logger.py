@@ -4,7 +4,7 @@ from rich.console import Console
 
 
 logger = logging.getLogger("bany")
-console = Console()
+console = Console(width=512)
 
 
 def logline(level=logging.INFO, c="-", w=120):

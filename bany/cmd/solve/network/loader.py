@@ -5,6 +5,7 @@ import logging
 import os
 import re
 import typing
+from pathlib import Path
 
 import pandas as pd
 import yaml
@@ -13,7 +14,7 @@ from bany.cmd.solve.network.attrs import INPUT_VALUE
 from bany.cmd.solve.network.attrs import node_attrs
 
 
-def load(path: str) -> pd.DataFrame:
+def load(path: str | Path) -> pd.DataFrame:
     """
     Load the configuration.
     """
@@ -26,7 +27,7 @@ def load(path: str) -> pd.DataFrame:
         raise ValueError(f"unknown input extension! {ext}")
 
 
-def load_yml(path: str) -> pd.DataFrame:
+def load_yml(path: str | Path) -> pd.DataFrame:
     """
     Load the configuration from YAML.
     """
@@ -35,7 +36,7 @@ def load_yml(path: str) -> pd.DataFrame:
         return _reformat_input(data)
 
 
-def load_csv(path: str) -> pd.DataFrame:
+def load_csv(path: str | Path) -> pd.DataFrame:
     """
     Load the configuration.
     """
