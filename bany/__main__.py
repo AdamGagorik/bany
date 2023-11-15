@@ -130,7 +130,7 @@ def pdf(
     """
     from bany.cmd.extract.app import main
 
-    main(extractor="", inp=inp, config=config, upload=upload)
+    main(extractor="pdf", inp=inp, config=config, upload=upload)
 
 
 if __name__ == "__main__":
