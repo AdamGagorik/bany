@@ -14,7 +14,7 @@ lines_after_imports = 2
 [tool.poetry]
 name = "bany"
 version = "1.2.2.post36.dev0+84e7fc0"
-description = ""
+description = "A collection of scripts for personal finance"
 authors = ["Adam Gagorik <adam.gagorik@gmail.com>"]
 readme = "README.md"
 license = "WTFPL"
