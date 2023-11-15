@@ -44,7 +44,7 @@ from bany.cmd.solve.solvers.constrained import BucketSolverSimple
                 ],
                 edges=[("T", "H"), ("T", "I"), ("T", "J")],
             ),
-            BucketSolverSimple,
+            BucketSolverSimple.solve,
         ),
         # simple_value_added : the amounts should be redistributed and value should be added
         (
@@ -97,7 +97,7 @@ from bany.cmd.solve.solvers.constrained import BucketSolverSimple
                 ],
                 edges=[("F", "U"), ("F", "V"), ("F", "W")],
             ),
-            BucketSolverSimple,
+            BucketSolverSimple.solve,
         ),
         # constrained_simple : values are only added to the final result and are in perfect ratios
         (
@@ -124,7 +124,7 @@ from bany.cmd.solve.solvers.constrained import BucketSolverSimple
                 ],
                 edges=[("A", "0"), ("A", "1"), ("A", "2")],
             ),
-            BucketSolverConstrained,
+            BucketSolverConstrained.solve,
         ),
         # constrained_complex : values are only added to the final result and are in perfect ratios
         (
@@ -211,7 +211,7 @@ from bany.cmd.solve.solvers.constrained import BucketSolverSimple
                 ],
                 edges=[("B", "3"), ("B", "4"), ("B", "5"), ("5", "C"), ("5", "D"), ("D", "6"), ("D", "7")],
             ),
-            BucketSolverConstrained,
+            BucketSolverConstrained.solve,
         ),
     ],
     ids=[

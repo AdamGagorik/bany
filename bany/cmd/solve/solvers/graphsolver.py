@@ -17,6 +17,7 @@ A    level=[0] results_value=[ 5,000.00] results_ratio=[1.000] amount_to_add=[  
 """
 import copy
 import typing
+from collections.abc import Callable
 
 import networkx as nx
 
@@ -30,10 +31,9 @@ from bany.cmd.solve.solvers.constrained import BucketSolverConstrained
 
 def solve(
     graph: nx.DiGraph,
-    solver: type[BucketSolver] = BucketSolverConstrained,
+    solver: Callable[[BucketSystem], BucketSolver] = BucketSolverConstrained.solve,
     inplace: bool = False,
     max_attempts: int = 10,
-    **kwargs,
 ) -> nx.DiGraph:
     """
     Solve the bucket problem over a hierarchy of buckets.
@@ -43,7 +43,6 @@ def solve(
         solver: The bucket solver during traversal.
         inplace: Should the operation happen in place or on a copy?
         max_attempts: The maximum allowed passes through the network.
-        **kwargs: Extra key word arguments to the solver's solve method.
 
     Returns:
         The modified graph, with the results_value and results_delta updated.
@@ -52,9 +51,9 @@ def solve(
         graph = copy.deepcopy(graph)
 
     # applying the solver here allows initial redistribution for unconstrained solvers
-    _apply_solver_over_graph(graph, solver, lambda a: a >= 0, **kwargs)
+    _apply_solver_over_graph(graph, solver, lambda a: a >= 0)
     for attempt in range(max_attempts):
-        stop_algorithm = _apply_solver_over_graph(graph, solver, lambda a: a > 0, **kwargs)
+        stop_algorithm = _apply_solver_over_graph(graph, solver, lambda a: a > 0)
         if stop_algorithm:
             break
     else:
@@ -78,7 +77,7 @@ def solve(
 
 
 def _apply_solver_over_graph(
-    graph: nx.DiGraph, solver: type[BucketSolver], condition: typing.Callable, **kwargs
+    graph: nx.DiGraph, solver: Callable[[BucketSystem], BucketSolver], condition: typing.Callable
 ) -> bool:
     """
     Walk the graph from the bottom up, solving the bucket problem over the set of children for each parent.
@@ -110,7 +109,7 @@ def _apply_solver_over_graph(
                 optimal_ratios=optimal_ratios,
                 labels=children,
             )
-            solved = solver.solve(system, **kwargs)
+            solved = solver(system)
 
             # negate the amount to add, so we don't try to add it again on the next pass
             graph.nodes[parent][node_attrs.amount_to_add.column] = -amount_to_add

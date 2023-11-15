@@ -28,7 +28,7 @@ class YNAB:
     This class can call the YNAB REST API.
     """
 
-    environ: Settings
+    environ: Settings = dataclasses.field(default_factory=Settings)
 
     def _make_url(self, *components: AnyUrl | str) -> AnyUrl:
         url = posixpath.join(*(str(c).lstrip("/") for c in itertools.chain((self.environ.YNAB_API_URL,), components)))
