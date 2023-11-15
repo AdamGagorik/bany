@@ -1,6 +1,10 @@
 # BANY
 
-A collection of scripts I've created to aid with budgeting using YNAB
+A collection of scripts to...
+
+1) Convert text in a PDF into YNAB transactions
+2) Split a series of transactions between people
+3) Solve the constrained partitioning problem for investing
 
 # Setup
 
@@ -18,7 +22,7 @@ Create YNAB transactions from a PDF
 
 ### Examples
 
-- Run the extact command to parse a PDF and upload transactions to YNAB
+- Run the extract command to parse a PDF and upload transactions to YNAB
 
 ```bash
 bany extract pdf --inp /path/to/pdf --config config.yaml
