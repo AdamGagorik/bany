@@ -1,7 +1,6 @@
 """
 Itemize and split a receipt between people.
 """
-import dataclasses
 import functools
 import re
 import sys
@@ -21,13 +20,11 @@ from cmd2 import with_default_category
 from rich.console import Console
 from rich.prompt import Confirm
 
-from bany.cmd.base import Controller as BaseController
 from bany.cmd.split.splitter import Split
 from bany.cmd.split.splitter import Splitter
 from bany.cmd.split.splitter import Tax
 from bany.cmd.split.splitter import Tip
 from bany.core.money import as_money
-from bany.core.settings import Settings
 
 
 class App(Cmd):
@@ -379,21 +376,3 @@ class SplitTransactions(CommandSet):
             return
 
         self._cmd.poutput(frame)
-
-
-@dataclasses.dataclass(frozen=True)
-class Controller(BaseController):
-    """
-    A class to orchestrate the main logic.
-    """
-
-    environ: Settings
-    options: Namespace
-
-    @classmethod
-    def add_args(cls, parser: ArgumentParser):
-        group = parser.add_argument_group("split")
-        return group
-
-    def __call__(self):
-        raise SystemExit(App().cmdloop())
