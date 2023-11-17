@@ -41,3 +41,13 @@ ifeq (, $(shell which pre-commit))
 else
 	pre-commit run -a
 endif
+
+.PHONY : release
+release:
+	gh release create
+	git pull
+	poetry dist
+	poetry build
+	poetry publish
+	pipx upgrade bany
+
