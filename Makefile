@@ -46,7 +46,6 @@ endif
 release:
 	gh release create
 	git pull
-	poetry dist
 	poetry build
 	poetry publish
 	pipx upgrade bany
