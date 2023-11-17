@@ -49,4 +49,3 @@ release:
 	poetry build
 	poetry publish
 	pipx upgrade bany
-
