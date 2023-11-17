@@ -42,6 +42,7 @@ app.add_typer(sub := Typer(), name="solve", help="Solve the bucket partitioning 
 def montecarlo(
     config: Annotated[Path, Option(help="The config file to use.")] = Path.cwd().joinpath("config.yml"),
     step_size: Annotated[float, Option(help="The Monte Carlo step size to use.")] = 0.01,
+    sheet_name: Annotated[str, Option(help="The sheet name or # when loading xlsx")] = "Sheet1",
 ) -> None:
     """
     Solve the partitioning problem using Monte Carlo techniques.
@@ -59,12 +60,14 @@ def montecarlo(
                 step_size=step_size,
             ),
         ),
+        sheet_name=sheet_name,
     )
 
 
 @sub.command()
 def constrained(
     config: Annotated[Path, Option(help="The config file to use.")] = Path.cwd().joinpath("config.yml"),
+    sheet_name: Annotated[str, Option(help="The sheet name or # when loading xlsx")] = "Sheet1",
 ) -> None:
     """
     Solve the partitioning problem using constrained optimization.
@@ -81,12 +84,14 @@ def constrained(
                 BucketSolverConstrained.solve,
             ),
         ),
+        sheet_name=sheet_name,
     )
 
 
 @sub.command()
 def unconstrained(
     config: Annotated[Path, Option(help="The config file to use.")] = Path.cwd().joinpath("config.yml"),
+    sheet_name: Annotated[str, Option(help="The sheet name or # when loading xlsx")] = "Sheet1",
 ) -> None:
     """
     Solve the partitioning problem using unconstrained optimization.
@@ -103,6 +108,7 @@ def unconstrained(
                 BucketSolverSimple.solve,
             ),
         ),
+        sheet_name=sheet_name,
     )
 
 

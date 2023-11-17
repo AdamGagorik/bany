@@ -22,8 +22,8 @@ from bany.core.logger import logline
 from bany.core.money import moneyfmt
 
 
-def main(solver: type[BucketSolver], config: Path) -> None:
-    frame: pd.DataFrame = bany.cmd.solve.network.loader.load(path=config)
+def main(solver: type[BucketSolver], config: Path, sheet_name: str) -> None:
+    frame: pd.DataFrame = bany.cmd.solve.network.loader.load(path=config, sheet_name=sheet_name)
     logger.info("frame:\n%s\n", frame)
 
     graph: nx.DiGraph = bany.cmd.solve.network.algo.create(frame)
