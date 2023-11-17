@@ -4,8 +4,9 @@ Methods for loading input into a DataFrame.
 import logging
 import os
 import re
-import typing
+from collections.abc import Generator
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 import yaml
@@ -14,20 +15,22 @@ from bany.cmd.solve.network.attrs import INPUT_VALUE
 from bany.cmd.solve.network.attrs import node_attrs
 
 
-def load(path: str | Path) -> pd.DataFrame:
+def load(path: str | Path, **kwargs: Any) -> pd.DataFrame:
     """
     Load the configuration.
     """
     ext = os.path.splitext(path)[-1].lower()
     if ext in [".yaml", ".yml"]:
-        return load_yml(path)
+        return load_yml(path, **kwargs)
+    elif ext in [".xlxs", ".xlsx"]:
+        return load_xls(path, **kwargs)
     elif ext in [".csv"]:
-        return load_csv(path)
+        return load_csv(path, **kwargs)
     else:
         raise ValueError(f"unknown input extension! {ext}")
 
 
-def load_yml(path: str | Path) -> pd.DataFrame:
+def load_yml(path: str | Path, **kwargs: Any) -> pd.DataFrame:
     """
     Load the configuration from YAML.
     """
@@ -36,13 +39,20 @@ def load_yml(path: str | Path) -> pd.DataFrame:
         return _reformat_input(data)
 
 
-def load_csv(path: str | Path) -> pd.DataFrame:
+def load_csv(path: str | Path, **kwargs: Any) -> pd.DataFrame:
     """
     Load the configuration.
     """
     with open(path) as stream:
         data: pd.DataFrame = pd.read_csv(stream)
         return _reformat_input(data)
+
+
+def load_xls(path: str | Path, **kwargs: Any) -> pd.DataFrame:
+    """
+    Load the configuration from excel file.
+    """
+    return _reformat_input(pd.read_excel(path, **kwargs))
 
 
 def _reformat_input(data: list | pd.DataFrame) -> pd.DataFrame:
@@ -74,7 +84,7 @@ def _expand_regex_patterns(row: pd.Series, frame: pd.DataFrame) -> tuple[str]:
     Look for regular expressions in child node lists and expand them.
     """
 
-    def it() -> typing.Generator[str, None, None]:
+    def it() -> Generator[str, None, None]:
         excluded = [row[node_attrs.label.column]]
         values = row["children"]
         for value in values:
