@@ -3,10 +3,19 @@ The data associated with each node or column when representing the problem.
 """
 import dataclasses
 import typing
+from functools import partial
 
-# common formats
-FORMAT_VALUE: str = "[{:10,.2f}]"
-FORMAT_RATIO: str = "[{:5,.3f}]"
+
+def format_number(value: int | float, width: int, precision: int = 2, filler=" ", sign: bool = False) -> str:
+    sign = "" if not sign else ("-" if value < 0 else ("+" if value > 0 else " "))
+    mark = "red" if value < 0 else ("cyan" if value > 0 else "default")
+    numb = f"{abs(value):,.{precision}f}" if abs(value) > 0 else filler * width
+    return f"[[bold]{sign}[/][bold {mark}]{numb:>{width}}[/]]"
+
+
+FORMAT_RATIO = partial(format_number, width=5, precision=3)
+FORMAT_VALUE = partial(format_number, width=11, precision=2, sign=True)
+
 
 # filter constants
 INPUT_VALUE: int = 1 << 0
