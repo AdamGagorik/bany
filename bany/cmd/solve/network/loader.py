@@ -65,8 +65,7 @@ def _reformat_input(data: list | pd.DataFrame) -> pd.DataFrame:
     valid = True
     for col in data.columns:
         if col not in ["children"] and col not in node_attrs.columns(filters=INPUT_VALUE):
-            logging.error("unknown column in input! %s", col)
-            valid = False
+            logging.warning("unknown column in input! %s", col)
 
     if not valid:
         raise ValueError("unknown column in input!")

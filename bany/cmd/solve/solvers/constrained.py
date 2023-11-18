@@ -58,7 +58,7 @@ class BucketSolverConstrained(BucketSolverSimple):
 
     @staticmethod
     def _make_g_vector(system: BucketSystem) -> np.array:
-        """Make g, the intial guess for x"""
+        """Make g, the initial guess for x"""
         return np.zeros_like(system.current.values)
 
     # noinspection PyUnusedLocal

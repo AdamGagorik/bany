@@ -24,7 +24,7 @@ def log(key: str, graph: nx.DiGraph, **kwargs):
     """
     Display the graph using ASCII art using logger.
     """
-    logger.info("%s:\n%s", key, text(graph, **kwargs))
+    logger.info("%s:\n%s", key, text(graph, **kwargs), extra=dict(markup=True))
 
 
 def text(graph: nx.DiGraph, attrs: bool = False, **kwargs) -> str:
@@ -89,7 +89,10 @@ class TextDisplayer:
             self.stream.write(f"{label:<{width}}")
             for key, fmt in self._get_node_attrs(label):
                 try:
-                    val = fmt.format(self.graph.nodes[label][key])
+                    if callable(fmt):
+                        val = fmt(self.graph.nodes[label][key])
+                    else:
+                        val = fmt.format(self.graph.nodes[label][key])
                 except KeyError:
                     # noinspection PyBroadException
                     try:

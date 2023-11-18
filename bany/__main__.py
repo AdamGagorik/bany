@@ -9,11 +9,11 @@ from typing import cast
 
 import pandas
 import pandas as pd
+from rich.console import Console
 from rich.logging import RichHandler
+from rich.theme import Theme
 from typer import Option
 from typer import Typer
-
-from bany.core.logger import console
 
 app = Typer(add_completion=False, help=__doc__, rich_markup_mode="rich")
 
@@ -26,7 +26,14 @@ def setup(
         level=logging.DEBUG,
         format="%(message)s",
         datefmt="[%X]",
-        handlers=[RichHandler(show_path=False, rich_tracebacks=True, console=console, tracebacks_suppress=(pandas,))],
+        handlers=[
+            RichHandler(
+                show_path=False,
+                rich_tracebacks=True,
+                tracebacks_suppress=(pandas,),
+                console=Console(theme=Theme({"repr.number": ""})),
+            )
+        ],
     )
     logging.getLogger("pdfminer").setLevel(logging.WARNING)
 
