@@ -1,6 +1,7 @@
 """
 Unit tests for module.
 """
+
 import builtins
 import io
 import textwrap

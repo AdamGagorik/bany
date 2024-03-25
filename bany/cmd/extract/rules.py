@@ -1,6 +1,7 @@
 """
 Rules for extraction information from a PDF.
 """
+
 import calendar
 import itertools
 import pathlib

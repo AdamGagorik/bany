@@ -1,6 +1,7 @@
 """
 Unit tests for module.
 """
+
 import logging
 
 import networkx as nx

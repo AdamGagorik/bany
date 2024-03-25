@@ -1,6 +1,7 @@
 """
 Unit tests for module.
 """
+
 import unittest.mock
 
 import networkx as nx

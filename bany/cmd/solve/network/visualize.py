@@ -1,6 +1,7 @@
 """
 Methods for creating a graph representation of the problem.
 """
+
 import dataclasses
 import io
 

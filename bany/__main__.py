@@ -1,6 +1,7 @@
 """
 Command line scripts for dealing with budgets.
 """
+
 import logging
 from functools import partial
 from pathlib import Path
