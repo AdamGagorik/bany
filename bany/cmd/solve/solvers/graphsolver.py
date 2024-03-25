@@ -15,6 +15,7 @@ A    level=[0] results_value=[ 5,000.00] results_ratio=[1.000] amount_to_add=[  
  ├─1 level=[1] results_value=[ 1,250.00] results_ratio=[0.250] amount_to_add=[   250.00]
  └─2 level=[1] results_value=[ 1,250.00] results_ratio=[0.250] amount_to_add=[   250.00]
 """
+
 import copy
 import typing
 from collections.abc import Callable

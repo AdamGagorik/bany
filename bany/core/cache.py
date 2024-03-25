@@ -1,6 +1,7 @@
 """
 This module defines a decorator for caching the results of an API call.
 """
+
 import functools
 import itertools
 import pathlib

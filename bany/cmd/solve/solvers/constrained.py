@@ -2,6 +2,7 @@
 Solve the bucket problem, but do not allow moving values between buckets.
 In this version of the problem, we can only add to buckets and an optimal solution may not exist.
 """
+
 import dataclasses
 import logging
 import typing

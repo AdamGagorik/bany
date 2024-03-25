@@ -1,6 +1,7 @@
 """
 Itemize and split a receipt between people.
 """
+
 import functools
 import re
 import sys

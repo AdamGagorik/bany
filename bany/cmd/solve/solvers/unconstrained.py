@@ -2,6 +2,7 @@
 Solve the bucket problem, allowing amounts to be removed from existing buckets.
 This is a pretty straight forward solution and places no major constrains on the problem.
 """
+
 import dataclasses
 
 import numpy as np

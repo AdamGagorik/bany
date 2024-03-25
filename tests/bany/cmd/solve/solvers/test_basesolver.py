@@ -1,6 +1,7 @@
 """
 Unit tests for module.
 """
+
 import pytest
 
 import bany.cmd.solve.solvers.basesolver

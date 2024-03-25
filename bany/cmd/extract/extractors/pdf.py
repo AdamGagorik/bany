@@ -1,6 +1,7 @@
 """
 Extract transactions from a PDF file using regular expressions.
 """
+
 import dataclasses
 import logging
 import pathlib

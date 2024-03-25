@@ -2,6 +2,7 @@
 
 Parse an input file and create transactions in YNAB.
 """
+
 from pathlib import Path
 
 import networkx as nx

@@ -1,6 +1,7 @@
 """
 A class to managed split expenses.
 """
+
 import dataclasses
 import functools
 import itertools
