@@ -1,6 +1,7 @@
 """
 Data structures for solvers for the bucket problem.
 """
+
 import dataclasses
 import logging
 

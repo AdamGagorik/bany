@@ -1,6 +1,7 @@
 """
 Parse an input file and create transactions in YNAB.
 """
+
 import pathlib
 import re
 from pathlib import Path

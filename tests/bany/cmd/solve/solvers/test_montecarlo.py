@@ -1,6 +1,7 @@
 """
 Unit tests for module.
 """
+
 import logging
 
 import numpy as np

@@ -1,6 +1,7 @@
 """
 Extract transactions from a file.
 """
+
 import dataclasses
 import pathlib
 from collections.abc import Iterator
