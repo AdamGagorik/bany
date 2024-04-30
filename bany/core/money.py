@@ -1,6 +1,7 @@
 """
 Helper functions for Money.
 """
+
 import decimal
 import itertools
 

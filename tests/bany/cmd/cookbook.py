@@ -1,6 +1,7 @@
 """
 Unit test utilities.
 """
+
 import logging
 
 import networkx as nx

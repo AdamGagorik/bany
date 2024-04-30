@@ -3,6 +3,7 @@ Solve the bucket problem, but do not allow moving values between buckets.
 In this version of the problem, we can only add to buckets and an optimal solution may not exist.
 This solution uses Monte Carlo and may not offer the optimal allocation of amounts into buckets, but gets close.
 """
+
 import dataclasses
 
 import numpy as np
