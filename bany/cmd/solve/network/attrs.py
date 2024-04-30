@@ -1,6 +1,7 @@
 """
 The data associated with each node or column when representing the problem.
 """
+
 import dataclasses
 import typing
 from functools import partial

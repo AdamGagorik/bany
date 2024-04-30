@@ -1,6 +1,7 @@
 """
 A base class for solutions to the bucket problem.
 """
+
 import dataclasses
 
 from bany.cmd.solve.solvers.bucketdata import BucketData
