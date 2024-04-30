@@ -2,7 +2,7 @@
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.5.0
+  rev: v4.6.0
   hooks:
   - id: check-added-large-files
   - id: check-ast
@@ -37,13 +37,13 @@ repos:
   - id: sort-simple-yaml
   - id: trailing-whitespace
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.15.0
+  rev: v3.15.2
   hooks:
   - id: pyupgrade
     args:
     - --py310-plus
 - repo: https://github.com/PyCQA/autoflake
-  rev: v2.2.1
+  rev: v2.3.1
   hooks:
   - id: autoflake
 - repo: https://github.com/asottile/reorder_python_imports
@@ -55,11 +55,11 @@ repos:
   hooks:
   - id: yesqa
 - repo: https://github.com/psf/black
-  rev: 23.12.1
+  rev: 24.4.2
   hooks:
   - id: black
 - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
-  rev: v2.12.0
+  rev: v2.13.0
   hooks:
   - id: pretty-format-yaml
     exclude: |
