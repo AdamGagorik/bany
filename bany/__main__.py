@@ -15,6 +15,7 @@ from rich.theme import Theme
 from typer import Option
 from typer import Typer
 
+
 app = Typer(add_completion=False, help=__doc__, rich_markup_mode="rich")
 
 
@@ -29,7 +30,7 @@ def setup(
         handlers=[
             RichHandler(
                 show_path=False,
-                rich_tracebacks=True,
+                rich_tracebacks=False,
                 tracebacks_suppress=(pandas,),
                 console=Console(theme=Theme({"repr.number": ""})),
             )
@@ -54,9 +55,9 @@ def montecarlo(
     """
     Solve the partitioning problem using Monte Carlo techniques.
     """
-    from bany.cmd.solve.solvers.montecarlo import BucketSolverConstrainedMonteCarlo
-    from bany.cmd.solve.solvers.basesolver import BucketSolver
     from bany.cmd.solve.app import main
+    from bany.cmd.solve.solvers.basesolver import BucketSolver
+    from bany.cmd.solve.solvers.montecarlo import BucketSolverConstrainedMonteCarlo
 
     main(
         config=config,
@@ -79,9 +80,9 @@ def constrained(
     """
     Solve the partitioning problem using constrained optimization.
     """
-    from bany.cmd.solve.solvers.constrained import BucketSolverConstrained
-    from bany.cmd.solve.solvers.basesolver import BucketSolver
     from bany.cmd.solve.app import main
+    from bany.cmd.solve.solvers.basesolver import BucketSolver
+    from bany.cmd.solve.solvers.constrained import BucketSolverConstrained
 
     main(
         config=config,
@@ -103,9 +104,9 @@ def unconstrained(
     """
     Solve the partitioning problem using unconstrained optimization.
     """
-    from bany.cmd.solve.solvers.unconstrained import BucketSolverSimple
-    from bany.cmd.solve.solvers.basesolver import BucketSolver
     from bany.cmd.solve.app import main
+    from bany.cmd.solve.solvers.basesolver import BucketSolver
+    from bany.cmd.solve.solvers.unconstrained import BucketSolverSimple
 
     main(
         config=config,

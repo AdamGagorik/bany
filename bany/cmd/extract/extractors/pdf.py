@@ -128,7 +128,7 @@ class Extractor(BaseExtractor):
 
     def _get_transactions_for_matches(self, dates: pd.DataFrame, amounts: pd.DataFrame) -> Iterator[Transaction]:
         for rule in self.rules.transactions:
-            if (amount := self._lookup_amount(rule.amount, amounts)) is not None:
+            if (amount := self._lookup_amount(rule.amount, amounts, rule.factor)) is not None:
                 budget_id = self.ynab.budget_id(rule.budget)
                 transaction = Transaction(
                     ####################################################################################################
@@ -180,14 +180,15 @@ class Extractor(BaseExtractor):
         else:
             raise NotImplementedError(type(key))
 
-    def _lookup_amount(self, key: int | tuple[int, int, str], amounts: pd.DataFrame) -> Money | None:
+    def _lookup_amount(self, key: int | tuple[int, int, str], amounts: pd.DataFrame, factor: int = 1) -> Money | None:
         if isinstance(key, Money):
-            return key
+            return factor * key
         elif isinstance(key, tuple):
             try:
-                return amounts.loc[key, "value"]
+                amount = amounts.loc[key, "value"]
+                return factor * amount
             except KeyError:
-                self._log_block("_lookup_date", "[%11s] KeyError: %s", "amounts".center(11, "-"), key)
+                self._log_block("_lookup_$$$$", "[%11s] KeyError: %s", "amounts".center(11, "-"), key)
                 return
         else:
             raise NotImplementedError(type(key))

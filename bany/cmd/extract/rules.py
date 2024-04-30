@@ -76,6 +76,7 @@ class TransactionRule(BaseModel):
     color: str | None = None
     amount: int | str | tuple[int, int, str]
     date: date | str | tuple[int, int, str]
+    factor: int = 1
 
     @field_validator("budget", mode="before")
     def _validate_budget(cls, value: str):
