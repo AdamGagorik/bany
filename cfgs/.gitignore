@@ -1,0 +1,6 @@
+*
+!.gitignore
+!allocate.yaml
+!costco-split.txt
+!extract-pdf-paylocity.yml
+!extract-pdf-lifeatford.yml

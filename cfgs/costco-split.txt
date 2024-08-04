@@ -1,0 +1,39 @@
+split -a 24.99      -p Costco -C Misc     -d        Dad=1        -c Adam=1
+tax -r 0.07
+split -a 16.39      -p Costco -C Misc     -d              Doug=1 -c Adam=1
+tax -r 0.07
+split -a 19.89      -p Costco -C Misc     -d              Doug=1 -c Adam=1
+tax -r 0.07
+split -a 21.49      -p Costco -C Misc     -d              Doug=1 -c Adam=1
+tax -r 0.07
+split -a 18.49      -p Costco -C Misc     -d              Doug=1 -c Adam=1
+split -a  5.99      -p Costco -C Food     -d Adam=1              -c Adam=1
+split -a 10.49      -p Costco -C Food     -d Adam=1              -c Adam=1
+split -a 19.99      -p Costco -C Clothes  -d Adam=1              -c Adam=1
+split -a 14.99-3.00 -p Costco -C Clothes  -d Adam=1              -c Adam=1
+split -a 16.99      -p Costco -C Clothes  -d Adam=1              -c Adam=1
+split -a 22.49      -p Costco -C Misc     -d        Dad=1        -c Adam=1
+split -a  4.79      -p Costco -C Food     -d Adam=1              -c Adam=1
+split -a  4.79      -p Costco -C Misc     -d        Dad=1        -c Adam=1
+split -a 11.89-3.50 -p Costco -C Food     -d Adam=1              -c Adam=1
+split -a 16.49      -p Costco -C Misc     -d        Dad=1        -c Adam=1
+tax -r 0.07
+split -a 12.99      -p Costco -C Misc     -d        Dad=1        -c Adam=1
+split -a  4.99      -p Costco -C Misc     -d        Dad=1        -c Adam=1
+split -a 13.29      -p Costco -C Misc     -d        Dad=1        -c Adam=1
+split -a 10.99      -p Costco -C Food     -d Adam=1              -c Adam=1
+split -a  8.99      -p Costco -C Misc     -d        Dad=1        -c Adam=1
+split -a 26.11      -p Costco -C Food     -d Adam=1              -c Adam=1
+split -a  8.99      -p Costco -C Food     -d Adam=1              -c Adam=1
+split -a  8.99      -p Costco -C Food     -d Adam=1              -c Adam=1
+split -a  8.97      -p Costco -C Food     -d Adam=1              -c Adam=1
+split -a 17.59      -p Costco -C Food     -d Adam=1              -c Adam=1
+split -a 17.99-3.60 -p Costco -C Laundry  -d Adam=1              -c Adam=1
+tax -r 0.07
+split -a 10.99      -p Costco -C Food     -d Adam=1              -c Adam=1
+split -a 22.99-5.00 -p Costco -C Kitchen  -d Adam=1              -c Adam=1
+tax -r 0.07
+split -a 26.99      -p Costco -C Laundry  -d Adam=1              -c Adam=1
+tax -r 0.07
+split -a  9.99      -p Costco -C Food     -d Adam=1              -c Adam=1
+summarize

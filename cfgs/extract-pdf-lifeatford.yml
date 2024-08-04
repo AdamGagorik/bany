@@ -1,0 +1,225 @@
+########################################################################################################################
+# Regular Expressions defined for date like values
+########################################################################################################################
+dates:
+  Force Date:
+    value: |-
+      2024-09-01
+
+  Check Date:
+    regex: |-
+      (?P<DATE>\d\d\d\d-\d\d-\d\d)
+
+########################################################################################################################
+# Regular Expressions defined for money like values
+########################################################################################################################
+amounts:
+  Salary:
+    group: EARNINGS
+    inflow: true
+    regex: |-
+      BASE\s+SALARY\s+
+      (?P<MONEY>{AMOUNT})
+
+  Award:
+    group: EARNINGS
+    inflow: true
+    regex: |-
+      PRIZE\s+AWARD\s+
+      (?P<MONEY>{AMOUNT})
+
+  TOTAL-EARNINGS:
+    group: EARNINGS
+    inflow: true
+    total: true
+    regex: |-
+      TOTAL\s+GROSS\s+
+      (?P<MONEY>{AMOUNT})
+
+  FITW:
+    group: TAXES
+    regex: |-
+      FEDERAL\s+
+      (?P<MONEY>{AMOUNT})
+
+  MED:
+    group: TAXES
+    regex: |-
+      MEDICARE\s+
+      (?P<MONEY>{AMOUNT})
+
+  PA:
+    group: TAXES
+    regex: |-
+      PENNSYLVANIA\s+
+      (?P<MONEY>{AMOUNT})
+
+  PASUI-E:
+    group: TAXES
+    regex: |-
+      STATE\sU\.\s?C\.\s+
+      (?P<MONEY>{AMOUNT})
+
+  SS:
+    group: TAXES
+    regex: |-
+      FICA\s+
+      (?P<MONEY>{AMOUNT})
+
+  401K:
+    group: DEDUCTIONS
+    regex: |-
+      SSIP\s+PRE-TAX\s+
+      (?P<MONEY>{AMOUNT})
+
+  TERM:
+    group: DEDUCTIONS
+    regex: |-
+      GPLIFE\s+IMPUTED\s+
+      (?P<MONEY>{AMOUNT})
+
+  HSA:
+    group: DEDUCTIONS
+    regex: |-
+      HSA\s+DEDUCTION\s+
+      (?P<MONEY>{AMOUNT})
+
+  Vision:
+    group: DEDUCTIONS
+    regex: |-
+      VISION\s+CARE\s+
+      (?P<MONEY>{AMOUNT})
+
+  Dental:
+    group: DEDUCTIONS
+    regex: |-
+      DENTAL\s+
+      (?P<MONEY>{AMOUNT})
+
+  TOTAL-DEDUCTIONS:
+    total: true
+    group: DEDUCTIONS
+    regex: |-
+      TOTAL\s+DEDEUCTIONS\s+
+      (?P<MONEY>{AMOUNT})
+
+  TOTAL-DEPOSITS:
+    group: DEPOSITS
+    inflow: true
+    total: true
+    regex: |-
+      NET\sPAY\s
+      (?P<MONEY>{AMOUNT})
+
+########################################################################################################################
+# Transactions to push to a YNAB budget (these may reference the matches defined above)
+########################################################################################################################
+transactions:
+- budget: 2024
+  account: 'PNC : Spend'
+  category: 'Taxes: Federal'
+  payee: 'USA : Income'
+  memo: '2024'
+  color: blue
+  amount: FITW
+  date: Force Date
+
+- budget: 2024
+  account: 'PNC : Spend'
+  category: 'Taxes: Federal'
+  payee: 'USA : MED/EE'
+  memo: '2024'
+  color: blue
+  amount: MED
+  date: Force Date
+
+- budget: 2024
+  account: 'PNC : Spend'
+  category: 'Taxes: State'
+  payee: 'USA : Income'
+  memo: '2024 : PA'
+  color: blue
+  amount: PA
+  date: Force Date
+
+- budget: 2024
+  account: 'PNC : Spend'
+  category: 'Insurance: Unemployment'
+  payee: PA
+  memo:
+  color: blue
+  amount: PASUI-E
+  date: Force Date
+
+- budget: 2024
+  account: 'PNC : Spend'
+  category: 'Taxes: Federal'
+  payee: 'USA : OSAD/EE'
+  memo: 2024
+  color: blue
+  amount: SS
+  date: Force Date
+
+- budget: 2024
+  account: 'PNC : Spend'
+  category: 'Insurance: Life'
+  payee: Gaurdian
+  memo:
+  color: blue
+  amount: TERM
+  date: Force Date
+
+- budget: 2024
+  account: 'PNC : Spend'
+  category: 'Insurance: Life'
+  payee: Gaurdian
+  memo:
+  color: red
+  amount: TERM
+  date: Force Date
+  factor: -1
+
+- budget: 2024
+  account: 'PNC : Spend'
+  category: 'Internal Master Category: Inflow: Ready to Assign'
+  payee: Ford
+  memo: 2024
+  color: red
+  amount: Salary
+  date: Force Date
+
+- budget: 2024
+  account: 'PNC : Spend'
+  category: 'Investment: Alight'
+  payee: 'Transfer : Alight : 401k'
+  memo: 2024
+  color: yellow
+  amount: 401K
+  date: Force Date
+
+- budget: 2024
+  account: 'PNC : Spend'
+  category: 'Investment: HSA'
+  payee: 'Transfer : Alight : HSA'
+  memo: 2024
+  color: yellow
+  amount: HSA
+  date: Force Date
+
+- budget: 2024
+  account: 'PNC : Spend'
+  category: 'Insurance: Vision'
+  payee: 'Davis Vision'
+  memo:
+  color: blue
+  amount: Vision
+  date: Force Date
+
+- budget: 2024
+  account: 'PNC : Spend'
+  category: 'Insurance: Dental'
+  payee: 'Delta Dental'
+  memo:
+  color: blue
+  amount: Dental
+  date: Force Date

@@ -1,0 +1,320 @@
+########################################################################################################################
+# Regular Expressions defined for date like values
+########################################################################################################################
+dates:
+  Force Date:
+    value: |-
+      2023-11-01
+
+  Check Date:
+    regex: |-
+      Check\s+Date\s+(?P<DATE>{MONTHS}\s+\d+,?\s+\d\d\d\d)
+
+  Period Beginning:
+    regex: |-
+      Period\s+Beginning\s+(?P<DATE>{MONTHS}\s+\d+,?\s+\d\d\d\d)
+
+  Period Ending:
+    regex: |-
+      Period\s+Ending\s+(?P<DATE>{MONTHS}\s+\d+,?\s+\d\d\d\d)
+
+########################################################################################################################
+# Regular Expressions defined for money like values
+########################################################################################################################
+amounts:
+  401K Match:
+    group: EARNINGS
+    inflow: true
+    regex: |-
+      401K\s+MAT\s+
+      (?P<HOURS>{NUMBER})\s+
+      (?P<MONEY>{AMOUNT})\s+
+      (?P<TOTAL>{AMOUNT})
+
+  Bonus:
+    group: EARNINGS
+    inflow: true
+    regex: |-
+      BONUS\s+
+      (?P<HOURS>{NUMBER})\s+
+      (?P<MONEY>{AMOUNT})\s+
+      (?P<TOTAL>{AMOUNT})\s+
+
+  Referral:
+    group: EARNINGS
+    inflow: true
+    regex: |-
+      Referral\s+B\s+
+      (?P<HOURS>{NUMBER})\s+
+      (?P<MONEY>{AMOUNT})\s+
+      (?P<TOTAL>{AMOUNT})
+
+  Group Term:
+    group: EARNINGS
+    inflow: true
+    regex: |-
+      GROUP\s+TE\s+
+      (?P<HOURS>{NUMBER})\s+
+      (?P<MONEY>{AMOUNT})\s+
+      (?P<TOTAL>{AMOUNT})
+
+  Salary:
+    group: EARNINGS
+    inflow: true
+    regex: |-
+      REGULAR\s+
+      (?P<RATES>{NUMBER})\s+
+      (?P<HOURS>{NUMBER})\s+
+      (?P<MONEY>{AMOUNT})\s+
+      (?P<TOTAL>{AMOUNT})
+
+  TOTAL-EARNINGS:
+    group: EARNINGS
+    inflow: true
+    total: true
+    regex: |-
+      Gross\s+Earnings\s+
+      (?P<HOURS>{NUMBER})\s+
+      (?P<MONEY>{AMOUNT})\s+
+      (?P<TOTAL>{AMOUNT})
+
+  FITW:
+    group: TAXES
+    regex: |-
+      FITW\s+
+      (?P<MONEY>{AMOUNT})\s+
+      (?P<TOTAL>{AMOUNT})
+
+  MED:
+    group: TAXES
+    regex: |-
+      MED\s+
+      (?P<MONEY>{AMOUNT})\s+
+      (?P<TOTAL>{AMOUNT})
+
+  PA:
+    group: TAXES
+    regex: |-
+      PA\s+
+      (?P<MONEY>{AMOUNT})\s+
+      (?P<TOTAL>{AMOUNT})
+
+  PA-LOCAL:
+    group: TAXES
+    regex: |-
+      PA-700102\s+
+      (?P<MONEY>{AMOUNT})\s+
+      (?P<TOTAL>{AMOUNT})
+
+  PA-PITF:
+    group: TAXES
+    regex: |-
+      PA-PITF\s+
+      (?P<MONEY>{AMOUNT})\s+
+      (?P<TOTAL>{AMOUNT})
+
+  PASUI-E:
+    group: TAXES
+    regex: |-
+      PASUI-E\s+
+      (?P<MONEY>{AMOUNT})\s+
+      (?P<TOTAL>{AMOUNT})
+
+  SS:
+    group: TAXES
+    regex: |-
+      SS\s+
+      (?P<MONEY>{AMOUNT})\s+
+      (?P<TOTAL>{AMOUNT})
+
+  TOTAL-TAXES:
+    total: true
+    group: TAXES
+    regex: |-
+      Taxes\s+
+      (?P<MONEY>{AMOUNT})\s+
+      (?P<TOTAL>{AMOUNT})
+
+  401K:
+    group: DEDUCTIONS
+    regex: |-
+      401K\s+
+      (?P<MONEY>{AMOUNT})\s+
+      (?P<TOTAL>{AMOUNT})
+
+  TERM:
+    group: DEDUCTIONS
+    regex: |-
+      GROUP\s+TERM\s+LIFE\s+-\s+FLAT\s+AM\s+
+      (?P<MONEY>{AMOUNT})\s+
+      (?P<TOTAL>{AMOUNT})
+
+  HSA:
+    group: DEDUCTIONS
+    regex: |-
+      Health\s+Spending\s+Acco\s+
+      (?P<MONEY>{AMOUNT})\s+
+      (?P<TOTAL>{AMOUNT})
+
+  WFH:
+    group: DEDUCTIONS
+    inflow: true
+    regex: |-
+      WFH\s+Reimb\s+
+      -(?P<MONEY>{AMOUNT})\s+
+      -(?P<TOTAL>{AMOUNT})
+
+  TOTAL-DEDUCTIONS:
+    total: true
+    group: DEDUCTIONS
+    regex: |-
+      Deductions\s+
+      (?P<MONEY>{AMOUNT})\s+
+      (?P<TOTAL>{AMOUNT})
+
+  TOTAL-DEPOSITS:
+    group: DEPOSITS
+    inflow: true
+    total: true
+    regex: |-
+      Total\s+Direct\s+Deposits\s+
+      (?P<MONEY>{AMOUNT})
+
+########################################################################################################################
+# Transactions to push to a YNAB budget (these may reference the matches defined above)
+########################################################################################################################
+transactions:
+- budget: 2023
+  account: 'PNC : Spend'
+  category: 'Taxes: Federal'
+  payee: 'USA : Income'
+  memo: '2023'
+  color: blue
+  amount: FITW
+  date: Force Date
+
+- budget: 2023
+  account: 'PNC : Spend'
+  category: 'Taxes: Federal'
+  payee: 'USA : MED/EE'
+  memo: '2023'
+  color: blue
+  amount: MED
+  date: Force Date
+
+- budget: 2023
+  account: 'PNC : Spend'
+  category: 'Taxes: State'
+  payee: 'USA : Income'
+  memo: '2023 : PA'
+  color: blue
+  amount: PA
+  date: Force Date
+
+- budget: 2023
+  account: 'PNC : Spend'
+  category: 'Taxes: Local'
+  payee: 'USA : Income'
+  memo: '2023 : PA - 700102'
+  color: blue
+  amount: PA-LOCAL
+  date: Force Date
+
+- budget: 2023
+  account: 'PNC : Spend'
+  category: 'Taxes: State'
+  payee: 'USA : Income'
+  memo: PA-PITF
+  color: blue
+  amount: PA-PITF
+  date: Force Date
+
+- budget: 2023
+  account: 'PNC : Spend'
+  category: 'Insurance: Unemployment'
+  payee: PA
+  memo:
+  color: blue
+  amount: PASUI-E
+  date: Force Date
+
+- budget: 2023
+  account: 'PNC : Spend'
+  category: 'Taxes: Federal'
+  payee: 'USA : OSAD/EE'
+  memo: 2023
+  color: blue
+  amount: SS
+  date: Force Date
+
+- budget: 2023
+  account: 'PNC : Spend'
+  category: 'Insurance: Life'
+  payee: Gaurdian
+  memo:
+  color: blue
+  amount: TERM
+  date: Force Date
+
+- budget: 2023
+  account: 'PNC : Spend'
+  category: 'Insurance: Life'
+  payee: Gaurdian
+  memo:
+  color: red
+  amount: Group Term
+  date: Force Date
+
+- budget: 2023
+  account: 'PNC : Spend'
+  category: 'Internal Master Category: Inflow: Ready to Assign'
+  payee: Syapse
+  memo: 2023
+  color: red
+  amount: Salary
+  date: Force Date
+
+- budget: 2023
+  account: 'PNC : Spend'
+  category: 'Investment: Fidelity'
+  payee: 'Transfer : Fidelity : Syapse'
+  memo: 2023
+  color: yellow
+  amount: 401K
+  date: Force Date
+
+- budget: 2023
+  account: 'PNC : Spend'
+  category: 'Investment: HSA'
+  payee: 'Transfer : Navia : HSA'
+  memo: 2023
+  color: yellow
+  amount: HSA
+  date: Force Date
+
+- budget: 2023
+  account: 'PNC : Spend'
+  category: 'Internal Master Category: Inflow: Ready to Assign'
+  payee: Syapse
+  memo: Stipend
+  color: red
+  amount: WFH
+  date: Force Date
+
+- budget: 2023
+  account: 'PNC : Spend'
+  category: 'Internal Master Category: Inflow: Ready to Assign'
+  payee: Syapse
+  memo: Bonus
+  color: red
+  amount: Bonus
+  date: Force Date
+
+- budget: 2023
+  account: 'PNC : Spend'
+  category: 'Internal Master Category: Inflow: Ready to Assign'
+  payee: Syapse
+  memo: Bonus
+  color: red
+  amount: Referral
+  date: Force Date
