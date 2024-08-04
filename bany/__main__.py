@@ -17,7 +17,7 @@ from typer import Option
 from typer import Typer
 
 
-app = Typer(add_completion=False, help=__doc__, rich_markup_mode="rich")
+app = Typer(add_completion=False, help=__doc__, rich_markup_mode="rich", pretty_exceptions_show_locals=False)
 
 
 @app.callback()
@@ -32,6 +32,7 @@ def setup(
             RichHandler(
                 show_path=False,
                 rich_tracebacks=False,
+                tracebacks_show_locals=False,
                 tracebacks_suppress=(pandas,),
                 console=Console(theme=Theme({"repr.number": ""})),
             )
