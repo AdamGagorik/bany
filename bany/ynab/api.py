@@ -12,6 +12,7 @@ from requests import Response
 from bany.core.cache import cached
 from bany.core.logger import logger
 from bany.core.settings import Settings
+from bany.ynab.transaction import ScheduledTransaction
 from bany.ynab.transaction import Transaction
 from bany.ynab.transaction import Transactions
 
@@ -118,7 +119,16 @@ class YNAB:
             "POST",
             f"/budgets/{budget_id}/transactions",
             headers={"Content-type": "application/json"},
-            data=transactions.json(exclude_none=True),
+            data=transactions.json(exclude_none=True, exclude={"frequency"}),
+        )
+
+    def scheduled_transact(self, budget_id: str, transaction: Transaction):
+        scheduled_transaction = ScheduledTransaction.parse_obj({"scheduled_transaction": transaction})
+        return self._make_request(
+            "POST",
+            f"/budgets/{budget_id}/scheduled_transactions",
+            headers={"Content-type": "application/json"},
+            data=scheduled_transaction.json(exclude_none=True),
         )
 
     def __hash__(self) -> int:

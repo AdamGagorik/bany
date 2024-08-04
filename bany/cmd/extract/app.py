@@ -2,6 +2,7 @@
 Parse an input file and create transactions in YNAB.
 """
 
+import datetime
 import pathlib
 import re
 from pathlib import Path
@@ -45,7 +46,10 @@ def main(extractor: str, inp: Path, config: Path, upload: bool) -> None:
         if upload:
             for i, extract in extracted.iterrows():
                 transaction = extract.transaction
-                ynab.transact(transaction.budget_id, transaction)
+                if transaction.date > datetime.date.today():
+                    ynab.scheduled_transact(transaction.budget_id, transaction)
+                else:
+                    ynab.transact(transaction.budget_id, transaction)
 
 
 def _get_latest_pdf(root: pathlib.Path) -> pathlib.Path:

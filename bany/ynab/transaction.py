@@ -35,6 +35,9 @@ class Transaction(BaseModel):
 
     import_index: int = Field(default=0, exclude=True, repr=False)
     import_id: str | None = Field(None, repr=False, validate_default=True)
+
+    frequency: str | None = "never"
+
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     @field_validator("import_id", mode="before")
@@ -48,4 +51,9 @@ class Transaction(BaseModel):
 
 class Transactions(BaseModel):
     transactions: list[Transaction]
+    model_config = ConfigDict(frozen=True)
+
+
+class ScheduledTransaction(BaseModel):
+    scheduled_transaction: Transaction
     model_config = ConfigDict(frozen=True)
