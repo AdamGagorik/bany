@@ -31,6 +31,7 @@ bany extract pdf --inp /path/to/pdf --config config.yaml --upload
 
 ### `config.yaml`
 
+- Some examples can be found in the `./cfg` directory
 - Define rules to match patterns in the text of a PDF
 - Define the transactions to create from these matches
 
@@ -111,7 +112,7 @@ bany split
 
 #### Run a series of commands
 
-You can run a series of commands defined in a text file.
+You can run a series of commands defined in a text file (see example in `./cfg` directory.
 
 ```text
 split -a 12.79 -p Costco -C Food -d Dad=1 Adam=0   Doug=0   -c Adam=1
