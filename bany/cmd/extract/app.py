@@ -6,6 +6,7 @@ import datetime
 import pathlib
 import re
 from pathlib import Path
+from rich.pretty import pprint
 
 import pandas as pd
 from moneyed import Money
@@ -43,13 +44,18 @@ def main(extractor: str, inp: Path, config: Path, upload: bool) -> None:
         logger.info("%-9s : %12s", "TOTAL [-]", Money(extracted[extracted.amount < 0].amount.sum() / 1000, USD))
         logger.info("%-9s : %12s", "TOTAL", Money(extracted.amount.sum() / 1000, USD))
 
-        if upload:
-            for i, extract in extracted.iterrows():
-                transaction = extract.transaction
-                if transaction.date > datetime.date.today():
-                    ynab.scheduled_transact(transaction.budget_id, transaction)
-                else:
-                    ynab.transact(transaction.budget_id, transaction)
+        for i, extract in extracted.iterrows():
+            transaction = extract.transaction
+            if upload:
+                # noinspection PyBroadException
+                try:
+                    if transaction.date > datetime.date.today():
+                        ynab.scheduled_transact(transaction.budget_id, transaction)
+                    else:
+                        ynab.transact(transaction.budget_id, transaction)
+                except Exception:
+                    logger.exception("can not upload transaction!")
+                    pprint(transaction)
 
 
 def _get_latest_pdf(root: pathlib.Path) -> pathlib.Path:
