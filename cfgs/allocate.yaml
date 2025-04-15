@@ -1,7 +1,7 @@
-- { label: 'TOTAL', optimal_ratio: 100, current_value: 6000, amount_to_add: 8000, children: ['regex::.*'] }
-- { label: 'VIGAX', optimal_ratio:  22, current_value: 1000, amount_to_add:    0, children: [] }
-- { label: 'VVIAX', optimal_ratio:  28, current_value: 1000, amount_to_add:    0, children: [] }
-- { label: 'VMGMX', optimal_ratio:  10, current_value: 1000, amount_to_add:    0, children: [] }
-- { label: 'VMVAX', optimal_ratio:  15, current_value: 1000, amount_to_add:    0, children: [] }
-- { label: 'VSGAX', optimal_ratio:  10, current_value: 1000, amount_to_add:    0, children: [] }
-- { label: 'VSIAX', optimal_ratio:  15, current_value: 1000, amount_to_add:    0, children: [] }
+- {label: TOTAL, optimal_ratio: 100, current_value: 6000, amount_to_add: 8000, children: [regex::.*]}
+- {label: VIGAX, optimal_ratio: 22, current_value: 1000, amount_to_add: 0, children: []}
+- {label: VVIAX, optimal_ratio: 28, current_value: 1000, amount_to_add: 0, children: []}
+- {label: VMGMX, optimal_ratio: 10, current_value: 1000, amount_to_add: 0, children: []}
+- {label: VMVAX, optimal_ratio: 15, current_value: 1000, amount_to_add: 0, children: []}
+- {label: VSGAX, optimal_ratio: 10, current_value: 1000, amount_to_add: 0, children: []}
+- {label: VSIAX, optimal_ratio: 15, current_value: 1000, amount_to_add: 0, children: []}

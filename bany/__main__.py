@@ -149,5 +149,18 @@ def pdf(
     main(extractor="pdf", inp=inp, config=config, upload=upload)
 
 
+@app.command()
+def ynab(
+    budget_name: Annotated[str, Option(help="The name of the YNAB budget.")],
+    show_categories: Annotated[bool, Option(help="Upload transactions to YNAB budget?")] = False,
+) -> None:
+    """
+    Display queries from the YNAB budget API.
+    """
+    from bany.cmd.ynab.app import main
+
+    main(budget_name=budget_name, show_categories=show_categories)
+
+
 if __name__ == "__main__":
     app()

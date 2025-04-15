@@ -1,6 +1,8 @@
 import dataclasses
 import itertools
 import posixpath
+import re
+from collections.abc import Generator
 from json import JSONDecodeError
 
 import requests
@@ -103,15 +105,22 @@ class YNAB:
 
     @cached(*KEYS)
     def category_id(self, budget_id: str, name: str) -> str:
-        tokens = [token.strip() for token in name.partition(":")]
-        group_, category_ = tokens[0], tokens[-1]
-        for group in self.categories(budget_id):
-            if group["name"] == group_:
-                for category in group.get("categories"):
-                    if category["name"] == category_:
-                        return category["id"]
+        lut = self.category_lut(budget_id)
+        return lut[self._norm_category_name(name)]
 
-        raise RuntimeError(f"can not find category id for {name}")
+    @cached(*KEYS)
+    def category_lut(self, budget_id: str) -> dict[str, str]:
+        def _() -> Generator[tuple[str, str], None, None]:
+            for group in self.categories(budget_id):
+                for category in group.get("categories"):
+                    name = f"{group['name']} : {category['name']}"
+                    yield self._norm_category_name(name), category["id"]
+
+        return dict(_())
+
+    @staticmethod
+    def _norm_category_name(name: str) -> str:
+        return re.sub(r"\s+", "", name).strip().lower()
 
     def transact(self, budget_id: str, *transactions: Transaction):
         transactions = Transactions.parse_obj({"transactions": transactions})

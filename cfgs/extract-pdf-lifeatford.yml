@@ -4,7 +4,7 @@
 dates:
   Force Date:
     value: |-
-      2024-09-01
+      2025-04-15
 
   Check Date:
     regex: |-
@@ -19,6 +19,13 @@ amounts:
     inflow: true
     regex: |-
       BASE\s+SALARY\s+
+      (?P<MONEY>{AMOUNT})
+
+  Bonus:
+    group: EARNINGS
+    inflow: true
+    regex: |-
+      LUMP\s+SUM\s+PYMT\s+
       (?P<MONEY>{AMOUNT})
 
   Award:
@@ -115,34 +122,34 @@ amounts:
 # Transactions to push to a YNAB budget (these may reference the matches defined above)
 ########################################################################################################################
 transactions:
-- budget: 2024
+- budget: 2025
   account: 'PNC : Spend'
   category: 'Taxes: Federal'
   payee: 'USA : Income'
-  memo: '2024'
+  memo: '2025'
   color: blue
   amount: FITW
   date: Force Date
 
-- budget: 2024
+- budget: 2025
   account: 'PNC : Spend'
   category: 'Taxes: Federal'
   payee: 'USA : MED/EE'
-  memo: '2024'
+  memo: '2025'
   color: blue
   amount: MED
   date: Force Date
 
-- budget: 2024
+- budget: 2025
   account: 'PNC : Spend'
   category: 'Taxes: State'
   payee: 'USA : Income'
-  memo: '2024 : PA'
+  memo: '2025 : PA'
   color: blue
   amount: PA
   date: Force Date
 
-- budget: 2024
+- budget: 2025
   account: 'PNC : Spend'
   category: 'Insurance: Unemployment'
   payee: PA
@@ -151,16 +158,16 @@ transactions:
   amount: PASUI-E
   date: Force Date
 
-- budget: 2024
+- budget: 2025
   account: 'PNC : Spend'
   category: 'Taxes: Federal'
   payee: 'USA : OSAD/EE'
-  memo: 2024
+  memo: 2025
   color: blue
   amount: SS
   date: Force Date
 
-- budget: 2024
+- budget: 2025
   account: 'PNC : Spend'
   category: 'Insurance: Life'
   payee: Gaurdian
@@ -169,7 +176,7 @@ transactions:
   amount: TERM
   date: Force Date
 
-- budget: 2024
+- budget: 2025
   account: 'PNC : Spend'
   category: 'Insurance: Life'
   payee: Gaurdian
@@ -179,46 +186,55 @@ transactions:
   date: Force Date
   factor: -1
 
-- budget: 2024
+- budget: 2025
   account: 'PNC : Spend'
-  category: 'Internal Master Category: Inflow: Ready to Assign'
+  category: 'Internal Master Category : Inflow: Ready to Assign'
   payee: Ford
-  memo: 2024
+  memo: 2025
   color: red
   amount: Salary
   date: Force Date
 
-- budget: 2024
+- budget: 2025
+  account: 'PNC : Spend'
+  category: 'Internal Master Category : Inflow: Ready to Assign'
+  payee: Ford
+  memo: 2025
+  color: red
+  amount: Bonus
+  date: Force Date
+
+- budget: 2025
   account: 'PNC : Spend'
   category: 'Investment: Alight'
   payee: 'Transfer : Alight : 401k'
-  memo: 2024
+  memo: 2025
   color: yellow
   amount: 401K
   date: Force Date
 
-- budget: 2024
+- budget: 2025
   account: 'PNC : Spend'
   category: 'Investment: HSA'
   payee: 'Transfer : Alight : HSA'
-  memo: 2024
+  memo: 2025
   color: yellow
   amount: HSA
   date: Force Date
 
-- budget: 2024
+- budget: 2025
   account: 'PNC : Spend'
   category: 'Insurance: Vision'
-  payee: 'Davis Vision'
+  payee: Davis Vision
   memo:
   color: blue
   amount: Vision
   date: Force Date
 
-- budget: 2024
+- budget: 2025
   account: 'PNC : Spend'
   category: 'Insurance: Dental'
-  payee: 'Delta Dental'
+  payee: Delta Dental
   memo:
   color: blue
   amount: Dental

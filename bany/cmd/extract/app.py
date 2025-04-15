@@ -6,11 +6,11 @@ import datetime
 import pathlib
 import re
 from pathlib import Path
-from rich.pretty import pprint
 
 import pandas as pd
 from moneyed import Money
 from moneyed import USD
+from rich.pretty import pprint
 
 from bany.cmd.extract.extractors import EXTRACTORS
 from bany.cmd.extract.extractors.base import Extractor
