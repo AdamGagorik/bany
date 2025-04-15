@@ -13,7 +13,7 @@ lines_after_imports = 2
 
 [tool.poetry]
 name = "bany"
-version = "0.0.0"
+version = "1.5.2"
 description = "A collection of scripts for personal finance"
 authors = ["Adam Gagorik <adam.gagorik@gmail.com>"]
 readme = "README.md"
