@@ -65,10 +65,10 @@ def test_network_children_only_have_single_parent(graph: nx.DiGraph, expected_va
         (
             cookbook.make_graph(
                 nodes=[
-                    ("0", dict(value=1.00)),
-                    ("A", dict(value=0.40)),
-                    ("B", dict(value=0.25)),
-                    ("C", dict(value=0.35)),
+                    ("0", {"value": 1.00}),
+                    ("A", {"value": 0.40}),
+                    ("B", {"value": 0.25}),
+                    ("C", {"value": 0.35}),
                 ],
                 edges=[("0", "A"), ("0", "B"), ("0", "C")],
             ),
@@ -78,10 +78,10 @@ def test_network_children_only_have_single_parent(graph: nx.DiGraph, expected_va
         (
             cookbook.make_graph(
                 nodes=[
-                    ("0", dict(value=100.0)),
-                    ("A", dict(value=100.0)),
-                    ("B", dict(value=100.0)),
-                    ("C", dict(value=100.0)),
+                    ("0", {"value": 100.0}),
+                    ("A", {"value": 100.0}),
+                    ("B", {"value": 100.0}),
+                    ("C", {"value": 100.0}),
                 ],
                 edges=[("0", "A"), ("0", "B"), ("0", "C")],
             ),
@@ -91,10 +91,10 @@ def test_network_children_only_have_single_parent(graph: nx.DiGraph, expected_va
         (
             cookbook.make_graph(
                 nodes=[
-                    ("0", dict(value=100.0)),
-                    ("A", dict(value=0.1)),
-                    ("B", dict(value=0.1)),
-                    ("C", dict(value=0.1)),
+                    ("0", {"value": 100.0}),
+                    ("A", {"value": 0.1}),
+                    ("B", {"value": 0.1}),
+                    ("C", {"value": 0.1}),
                 ],
                 edges=[("0", "A"), ("0", "B"), ("0", "C")],
             ),
@@ -115,13 +115,13 @@ def test_network_sums_to_100_percent_at_each_level(graph: nx.DiGraph, key: str, 
         (
             cookbook.make_graph(
                 nodes=[
-                    ("W", dict(value=1.00)),
-                    ("X", dict(value=0.40)),
-                    ("Y", dict(value=0.25)),
-                    ("Z", dict(value=0.35)),
-                    ("T", dict(value=0.10)),
-                    ("U", dict(value=0.20)),
-                    ("V", dict(value=0.05)),
+                    ("W", {"value": 1.00}),
+                    ("X", {"value": 0.40}),
+                    ("Y", {"value": 0.25}),
+                    ("Z", {"value": 0.35}),
+                    ("T", {"value": 0.10}),
+                    ("U", {"value": 0.20}),
+                    ("V", {"value": 0.05}),
                 ],
                 edges=[("W", "X"), ("W", "Y"), ("W", "Z"), ("Z", "T"), ("Z", "U"), ("Z", "V")],
             ),
@@ -131,9 +131,9 @@ def test_network_sums_to_100_percent_at_each_level(graph: nx.DiGraph, key: str, 
         (
             cookbook.make_graph(
                 nodes=[
-                    ("N", dict(value=1.00)),
-                    ("M", dict(value=0.40)),
-                    ("O", dict(value=0.25)),
+                    ("N", {"value": 1.00}),
+                    ("M", {"value": 0.40}),
+                    ("O", {"value": 0.25}),
                 ],
                 edges=[("M", "N"), ("M", "O")],
             ),

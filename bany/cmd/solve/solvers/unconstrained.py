@@ -8,8 +8,7 @@ import dataclasses
 import numpy as np
 
 from bany.cmd.solve.solvers.basesolver import BucketSolver
-from bany.cmd.solve.solvers.bucketdata import BucketData
-from bany.cmd.solve.solvers.bucketdata import BucketSystem
+from bany.cmd.solve.solvers.bucketdata import BucketData, BucketSystem
 
 
 @dataclasses.dataclass()

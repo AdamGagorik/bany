@@ -65,28 +65,36 @@ def expected_load_results():
     """
     Expected result for examples.
     """
-    yield pd.DataFrame(
-        [
-            dict(label="0", optimal_ratio=1.0e2, current_value=5500.0, amount_to_add=1.0, children=("A", "B", "C")),
-            dict(label="A", optimal_ratio=4.5e1, current_value=1000.0, amount_to_add=0.0, children=()),
-            dict(label="B", optimal_ratio=2.0e1, current_value=1500.0, amount_to_add=0.0, children=()),
-            dict(label="C", optimal_ratio=3.5e1, current_value=3000.0, amount_to_add=0.0, children=()),
-        ]
-    )
+    yield pd.DataFrame([
+        {
+            "label": "0",
+            "optimal_ratio": 1.0e2,
+            "current_value": 5500.0,
+            "amount_to_add": 1.0,
+            "children": ("A", "B", "C"),
+        },
+        {"label": "A", "optimal_ratio": 4.5e1, "current_value": 1000.0, "amount_to_add": 0.0, "children": ()},
+        {"label": "B", "optimal_ratio": 2.0e1, "current_value": 1500.0, "amount_to_add": 0.0, "children": ()},
+        {"label": "C", "optimal_ratio": 3.5e1, "current_value": 3000.0, "amount_to_add": 0.0, "children": ()},
+    ])
 
 
 def test_load():
-    with unittest.mock.patch.object(loader, "load_yml") as mock_load_yml:
-        with unittest.mock.patch.object(loader, "load_csv") as mock_load_csv:
-            loader.load("input.yaml")
-            mock_load_yml.assert_called_once()
-            mock_load_csv.assert_not_called()
+    with (
+        unittest.mock.patch.object(loader, "load_yml") as mock_load_yml,
+        unittest.mock.patch.object(loader, "load_csv") as mock_load_csv,
+    ):
+        loader.load("input.yaml")
+        mock_load_yml.assert_called_once()
+        mock_load_csv.assert_not_called()
 
-    with unittest.mock.patch.object(loader, "load_yml") as mock_load_yml:
-        with unittest.mock.patch.object(loader, "load_csv") as mock_load_csv:
-            loader.load("input.csv")
-            mock_load_csv.assert_called_once()
-            mock_load_yml.assert_not_called()
+    with (
+        unittest.mock.patch.object(loader, "load_yml") as mock_load_yml,
+        unittest.mock.patch.object(loader, "load_csv") as mock_load_csv,
+    ):
+        loader.load("input.csv")
+        mock_load_csv.assert_called_once()
+        mock_load_yml.assert_not_called()
 
     with pytest.raises(ValueError, match="unknown .* extension!"):
         loader.load("input.jpeg")

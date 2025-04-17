@@ -6,7 +6,7 @@ import dataclasses
 import logging
 import pathlib
 import re
-from collections.abc import Iterator
+from collections.abc import Generator, Iterator
 from datetime import date
 from re import Match
 from typing import cast
@@ -14,18 +14,11 @@ from typing import cast
 import dateutil.parser
 import pandas as pd
 import pdfplumber
-from moneyed import Money
-from moneyed import USD
+from moneyed import USD, Money
 
 from bany.cmd.extract.extractors.base import Extractor as BaseExtractor
-from bany.cmd.extract.rules import AmountRule
-from bany.cmd.extract.rules import DateRule
-from bany.cmd.extract.rules import get_rules
-from bany.cmd.extract.rules import Rule
-from bany.cmd.extract.rules import Rules
-from bany.cmd.extract.rules import SKIP
-from bany.core.logger import logger
-from bany.core.logger import logline
+from bany.cmd.extract.rules import SKIP, AmountRule, DateRule, Rule, Rules, get_rules
+from bany.core.logger import logger, logline
 from bany.ynab.transaction import Transaction
 
 
@@ -74,29 +67,29 @@ class Extractor(BaseExtractor):
 
     @staticmethod
     def _display_matches(amounts: pd.DataFrame, exclude_cols: set = frozenset(("regex", "match"))):
-        for group_index, group in amounts.groupby(by="group"):
+        for _, group in amounts.groupby(by="group"):
             logger.info("amounts:\n%s", group.loc[:, ~group.columns.isin(exclude_cols)])
 
     @staticmethod
     def _make_frame(rules: dict[tuple[int, int, str], Rule]) -> pd.DataFrame:
         return pd.DataFrame(
-            (rule.dict() for rule in rules.values()),
+            (rule.model_dump() for rule in rules.values()),
             index=pd.MultiIndex.from_tuples(tuples=list(rules.keys()), names=("page", "match", "key")),
         )
 
     @staticmethod
-    def _get_text_from_pdf(path: pathlib.Path) -> tuple[str]:
+    def _get_text_from_pdf(path: pathlib.Path) -> tuple[str, ...]:
         with pdfplumber.open(path) as pdf:
             return tuple(page.extract_text() for page in pdf.pages)
 
-    def _get_matches_for_text(self, rule: Rule, texts: tuple[str]) -> tuple[int, int, Rule]:
+    def _get_matches_for_text(self, rule: Rule, texts: tuple[str, ...]) -> Generator[tuple[int, int, Rule], None, None]:
         count = 0
 
         if rule.regex is SKIP:
             if isinstance(rule, DateRule) and rule.value is not None:
                 count += 1
                 match = re.match(f"(?P<DATE>{re.escape(str(rule.value))})", f"{rule.value}")
-                yield 0, 0, rule.copy(update=dict(value=self._get_match_as_date(rule, match), match=match))
+                yield 0, 0, rule.model_copy(update=dict(value=self._get_match_as_date(rule, match), match=match))  # noqa: C408
             else:
                 raise NotImplementedError(type(rule))
         else:
@@ -105,10 +98,20 @@ class Extractor(BaseExtractor):
                     for j, match in enumerate(rule.regex.finditer(text)):
                         if isinstance(rule, DateRule):
                             count += 1
-                            yield i, j, rule.copy(update=dict(value=self._get_match_as_date(rule, match), match=match))
+                            yield (
+                                i,
+                                j,
+                                rule.model_copy(update={"value": self._get_match_as_date(rule, match), "match": match}),
+                            )
                         elif isinstance(rule, AmountRule):
                             count += 1
-                            yield i, j, rule.copy(update=dict(value=self._get_match_as_money(rule, match), match=match))
+                            yield (
+                                i,
+                                j,
+                                rule.model_copy(
+                                    update={"value": self._get_match_as_money(rule, match), "match": match}
+                                ),
+                            )
                         else:
                             raise NotImplementedError(type(rule))
         if count == 0:
@@ -190,7 +193,7 @@ class Extractor(BaseExtractor):
                 return factor * amount
             except KeyError:
                 self._log_block("_lookup_$$$$", "[%11s] KeyError: %s", "amounts".center(11, "-"), key)
-                return
+                return None
         else:
             raise NotImplementedError(type(key))
 

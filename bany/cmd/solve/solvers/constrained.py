@@ -10,8 +10,7 @@ import typing
 import numpy as np
 import scipy.optimize
 
-from bany.cmd.solve.solvers.bucketdata import BucketData
-from bany.cmd.solve.solvers.bucketdata import BucketSystem
+from bany.cmd.solve.solvers.bucketdata import BucketData, BucketSystem
 from bany.cmd.solve.solvers.unconstrained import BucketSolverSimple
 
 

@@ -9,9 +9,8 @@ A collection of scripts to...
 # Setup
 
 ```bash
-pyenv local 3.11.1
-pipx install bany --python $(which python)
-bany --help
+export LANG=en_US.UTF-8
+uv run bany --help
 ```
 
 # Commands
@@ -25,8 +24,9 @@ Create YNAB transactions from a PDF
 - Run the extract command to parse a PDF and upload transactions to YNAB
 
 ```bash
-bany extract pdf --inp /path/to/pdf --config config.yaml
-bany extract pdf --inp /path/to/pdf --config config.yaml --upload
+export LANG=en_US.UTF-8
+uv run bany extract pdf --inp /path/to/pdf --config config.yaml
+uv run bany extract pdf --inp /path/to/pdf --config config.yaml --upload
 ```
 
 ### `config.yaml`
@@ -107,7 +107,8 @@ This is a script to help split transactions between multiple people.
 This script opens an interactive loop.
 
 ```bash
-bany split
+export LANG=en_US.UTF-8
+uv run bany split
 ```
 
 #### Run a series of commands
@@ -220,15 +221,15 @@ How should we place the new items into the buckets?
 ```bash
 # The problem will be solved in an unconstrained way by default
 # Values can be added or removed from existing bins
-bany solve unconstrained --config allocate.yaml
+uv run bany solve unconstrained --config allocate.yaml
 
 # The problem can be solved in a constrained way as well
 # Values can only be added to bins
-bany solve constrained --config allocate.yaml
+uv run bany solve constrained --config allocate.yaml
 
 # A Monte Carlo based solver also exists, which is non-deterministic
 # Values can be added in fixed sizes
-bany solve montecarlo --config allocate.yaml --stepsize 25
+uv run bany solve montecarlo --config allocate.yaml --stepsize 25
 ```
 
 #### Input Distribution

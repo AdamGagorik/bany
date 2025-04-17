@@ -6,8 +6,7 @@ import dataclasses
 
 import pytest
 
-from bany.cmd.solve.network.attrs import DISPLAY_INP
-from bany.cmd.solve.network.attrs import node_attrs
+from bany.cmd.solve.network.attrs import DISPLAY_INP, node_attrs
 
 
 def test_subset_default():

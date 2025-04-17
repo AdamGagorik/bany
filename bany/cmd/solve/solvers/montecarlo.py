@@ -9,8 +9,7 @@ import dataclasses
 import numpy as np
 
 from bany.cmd.solve.solvers.basesolver import BucketSolver
-from bany.cmd.solve.solvers.bucketdata import BucketData
-from bany.cmd.solve.solvers.bucketdata import BucketSystem
+from bany.cmd.solve.solvers.bucketdata import BucketData, BucketSystem
 
 
 @dataclasses.dataclass()
@@ -26,7 +25,7 @@ class BucketSolverConstrainedMonteCarlo(BucketSolver):
 
     @classmethod
     def solve(
-        cls, system: BucketSystem, step_size: float = 0.01, max_steps: int = None
+        cls, system: BucketSystem, step_size: float = 0.01, max_steps: int | None = None
     ) -> "BucketSolverConstrainedMonteCarlo":
         """
         Solve the bucket problem.
@@ -38,7 +37,7 @@ class BucketSolverConstrainedMonteCarlo(BucketSolver):
         n_values = np.copy(system.current.values)
         p_vector = cls._make_p_vector(n_values, system.optimal.values)
 
-        for i in range(max_steps):
+        for _ in range(max_steps):
             if np.sum(p_vector) <= 0.0:
                 break
             if total_added >= (system.amount_to_add - step_size):
@@ -78,9 +77,6 @@ class BucketSolverConstrainedMonteCarlo(BucketSolver):
         p_vector = np.where(p_vector > 0, p_vector, 0.0)
         p_length = np.linalg.norm(p_vector, 1)
 
-        if p_length > 0:
-            p_vector = p_vector / p_length
-        else:
-            p_vector = np.zeros_like(current)
+        p_vector = p_vector / p_length if p_length > 0 else np.zeros_like(current)
 
         return p_vector

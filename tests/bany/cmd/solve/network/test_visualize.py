@@ -17,16 +17,16 @@ import tests.bany.cmd.cookbook as cookbook
         (
             cookbook.make_graph(
                 nodes=[
-                    ("0", dict(value=8.00)),
-                    ("A", dict(value=2.00)),
-                    ("B", dict(value=2.00)),
-                    ("C", dict(value=4.00)),
-                    ("D", dict(value=4.00)),
-                    ("E", dict(value=4.00)),
+                    ("0", {"value": 8.00}),
+                    ("A", {"value": 2.00}),
+                    ("B", {"value": 2.00}),
+                    ("C", {"value": 4.00}),
+                    ("D", {"value": 4.00}),
+                    ("E", {"value": 4.00}),
                 ],
                 edges=[("0", "A"), ("0", "B"), ("0", "C"), ("C", "D"), ("C", "E")],
             ),
-            dict(value="{:.3f}", other="{:.3f}"),
+            {"value": "{:.3f}", "other": "{:.3f}"},
         ),
     ],
 )

@@ -5,17 +5,16 @@ Command line scripts for dealing with budgets.
 import logging
 from functools import partial
 from pathlib import Path
-from typing import Annotated
-from typing import cast
+from typing import Annotated, cast
 
 import pandas
 import pandas as pd
 from rich.console import Console
 from rich.logging import RichHandler
 from rich.theme import Theme
-from typer import Option
-from typer import Typer
+from typer import Option, Typer
 
+DEFAULT_CONFIG: Path = Path.cwd().joinpath("config.yml")
 
 app = Typer(add_completion=False, help=__doc__, rich_markup_mode="rich", pretty_exceptions_show_locals=False)
 
@@ -50,7 +49,7 @@ app.add_typer(sub := Typer(), name="solve", help="Solve the bucket partitioning 
 
 @sub.command()
 def montecarlo(
-    config: Annotated[Path, Option(help="The config file to use.")] = Path.cwd().joinpath("config.yml"),
+    config: Annotated[Path, Option(help="The config file to use.")] = DEFAULT_CONFIG,
     step_size: Annotated[float, Option(help="The Monte Carlo step size to use.")] = 0.01,
     sheet_name: Annotated[str, Option(help="The sheet name or # when loading xlsx")] = "Sheet1",
 ) -> None:
@@ -76,7 +75,7 @@ def montecarlo(
 
 @sub.command()
 def constrained(
-    config: Annotated[Path, Option(help="The config file to use.")] = Path.cwd().joinpath("config.yml"),
+    config: Annotated[Path, Option(help="The config file to use.")] = DEFAULT_CONFIG,
     sheet_name: Annotated[str, Option(help="The sheet name or # when loading xlsx")] = "Sheet1",
 ) -> None:
     """
@@ -100,7 +99,7 @@ def constrained(
 
 @sub.command()
 def unconstrained(
-    config: Annotated[Path, Option(help="The config file to use.")] = Path.cwd().joinpath("config.yml"),
+    config: Annotated[Path, Option(help="The config file to use.")] = DEFAULT_CONFIG,
     sheet_name: Annotated[str, Option(help="The sheet name or # when loading xlsx")] = "Sheet1",
 ) -> None:
     """
@@ -127,7 +126,7 @@ def split() -> None:
     """
     Itemize and split a receipt between people.
     """
-    from .cmd.split.app import App
+    from bany.cmd.split.app import App
 
     raise SystemExit(App().cmdloop())
 
@@ -138,7 +137,7 @@ app.add_typer(sub := Typer(), name="extract", help="Parse an input file and crea
 @sub.command()
 def pdf(
     inp: Annotated[Path, Option(help="The input file to parse.")],
-    config: Annotated[Path, Option(help="The config file to use.")] = Path.cwd().joinpath("config.yml"),
+    config: Annotated[Path, Option(help="The config file to use.")] = DEFAULT_CONFIG,
     upload: Annotated[bool, Option(help="Upload transactions to YNAB budget?")] = False,
 ) -> None:
     """

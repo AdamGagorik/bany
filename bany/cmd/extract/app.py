@@ -8,14 +8,12 @@ import re
 from pathlib import Path
 
 import pandas as pd
-from moneyed import Money
-from moneyed import USD
+from moneyed import USD, Money
 from rich.pretty import pprint
 
 from bany.cmd.extract.extractors import EXTRACTORS
 from bany.cmd.extract.extractors.base import Extractor
-from bany.core.logger import logger
-from bany.core.logger import logline
+from bany.core.logger import logger, logline
 from bany.ynab.api import YNAB
 
 
@@ -28,9 +26,7 @@ def main(extractor: str, inp: Path, config: Path, upload: bool) -> None:
     logger.info("inp: %s", inp)
 
     extractor: Extractor = EXTRACTORS[extractor].create(ynab=ynab, config=config)
-    extracted = pd.DataFrame(
-        extract.model_dump() | dict(transaction=extract) for extract in extractor.extract(path=inp)
-    )
+    extracted = pd.DataFrame(extract.model_dump() | {"transaction": extract} for extract in extractor.extract(path=inp))
 
     if extracted.empty:
         logger.error("no extracted found in PDF")
@@ -44,7 +40,7 @@ def main(extractor: str, inp: Path, config: Path, upload: bool) -> None:
         logger.info("%-9s : %12s", "TOTAL [-]", Money(extracted[extracted.amount < 0].amount.sum() / 1000, USD))
         logger.info("%-9s : %12s", "TOTAL", Money(extracted.amount.sum() / 1000, USD))
 
-        for i, extract in extracted.iterrows():
+        for _, extract in extracted.iterrows():
             transaction = extract.transaction
             if upload:
                 # noinspection PyBroadException

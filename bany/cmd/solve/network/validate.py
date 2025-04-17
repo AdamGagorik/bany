@@ -45,9 +45,10 @@ def network_has_no_cycles(graph: nx.DiGraph) -> bool:
         logging.error("network cycle found!")
         for edge in cycle:
             logging.error("edge: %s -> %s", *edge[:2])
-        return False
     except networkx.exception.NetworkXNoCycle:
         return True
+    else:
+        return False
 
 
 def network_has_no_orphan_children(graph: nx.DiGraph) -> bool:
@@ -111,13 +112,13 @@ def network_child_node_values_sum_to_parent_node_value(graph: nx.DiGraph, key: s
         for node, successors in nx.algorithms.bfs_successors(graph, source):
             p_value = graph.nodes[node].get(key, 0.0)
             c_value = sum(graph.nodes[child].get(key, 0.0) for child in successors)
-            yield dict(node=node, p_value=p_value, c_value=c_value)
+            yield {"node": node, "p_value": p_value, "c_value": c_value}
 
     valid = True
     frame = pd.DataFrame(it())
     if not frame.empty:
         frame["is_close"] = np.isclose(frame.p_value, frame.c_value, rtol=1.0e-5, atol=1.0e-8)
-        for index, row in frame.iterrows():
+        for _, row in frame.iterrows():
             if not row.is_close:
                 valid = False
                 logger.error("%s does not sum over children to the expected amount for node %s!", key, row.node)

@@ -53,7 +53,7 @@ def solve(
 
     # applying the solver here allows initial redistribution for unconstrained solvers
     _apply_solver_over_graph(graph, solver, lambda a: a >= 0)
-    for attempt in range(max_attempts):
+    for _ in range(max_attempts):
         stop_algorithm = _apply_solver_over_graph(graph, solver, lambda a: a > 0)
         if stop_algorithm:
             break

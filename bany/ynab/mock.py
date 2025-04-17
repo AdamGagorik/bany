@@ -39,13 +39,13 @@ class MockYNAB(YNAB):
 
 
 def mock_json_for_budgets(**kwargs) -> dict:
-    return {"budgets": {"json": {"data": {"budgets": [{"name": name, "id": id} for name, id in kwargs.items()]}}}}
+    return {"budgets": {"json": {"data": {"budgets": [{"name": name, "id": id_} for name, id_ in kwargs.items()]}}}}
 
 
 def mock_json_for_payees(budget_id: str, **kwargs) -> dict:
     return {
         f"/budgets/{budget_id}/payees": {
-            "json": {"data": {"payees": [{"name": name, "id": id} for name, id in kwargs.items()]}}
+            "json": {"data": {"payees": [{"name": name, "id": id_} for name, id_ in kwargs.items()]}}
         }
     }
 
@@ -53,6 +53,6 @@ def mock_json_for_payees(budget_id: str, **kwargs) -> dict:
 def mock_json_for_accounts(budget_id: str, **kwargs) -> dict:
     return {
         f"/budgets/{budget_id}/accounts": {
-            "json": {"data": {"accounts": [{"name": name, "id": id} for name, id in kwargs.items()]}}
+            "json": {"data": {"accounts": [{"name": name, "id": id_} for name, id_ in kwargs.items()]}}
         }
     }

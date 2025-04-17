@@ -1,5 +1,5 @@
 """
-A class to managed split expenses.
+A class to manage split expenses.
 """
 
 import dataclasses
@@ -9,16 +9,10 @@ from collections import Counter
 from collections.abc import Iterator
 
 import pandas as pd
-from moneyed import Money
-from moneyed import USD
-from pydantic import BaseModel
-from pydantic import ConfigDict
-from pydantic import Field
-from pydantic import field_validator
-from pydantic import ValidationInfo
+from moneyed import USD, Money
+from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validator
 
 from bany.core.money import as_money
-
 
 BROKE = Money(0.00, USD)
 PENNY = Money(0.01, USD)
@@ -47,7 +41,7 @@ class Split(BaseModel):
     @field_validator("debtors", mode="before")
     def _validate_debtors(cls, value: str | tuple[str, ...], info: ValidationInfo) -> dict[str:int]:
         """
-        Validate creation of debtors field.
+        Validate creation of the debtor field.
         """
         if isinstance(value, str):
             value = (value,)
@@ -119,10 +113,10 @@ class Splitter:
     Calculate who owes what from a collection of split transactions.
     """
 
-    splits: dict[int, list[Split, ...]] = dataclasses.field(default_factory=dict)
+    splits: dict[int, list[Split]] = dataclasses.field(default_factory=dict)
 
     @property
-    @functools.lru_cache(maxsize=1)
+    @functools.lru_cache(maxsize=1)  # noqa: B019
     def names(self) -> tuple[str, ...]:
         """
         The names of all persons taking part across all splits.
@@ -139,7 +133,7 @@ class Splitter:
         )
 
     @property
-    @functools.lru_cache(maxsize=1)
+    @functools.lru_cache(maxsize=1)  # noqa: B019
     def frame(self) -> pd.DataFrame:
         """
         Create the table of transactions from the current splits.
@@ -156,7 +150,7 @@ class Splitter:
         """
         Turn the current splits into a table.
         """
-        table = pd.DataFrame(data=[s.dict() for s in itertools.chain(*self.splits.values())])
+        table = pd.DataFrame(data=[s.model_dump() for s in itertools.chain(*self.splits.values())])
         table = table[table.amount > BROKE].reset_index(drop=True)
         return table
 
@@ -237,8 +231,8 @@ class Splitter:
             counts = subset.groupby("Who").Delta.sum()
             select = counts.index.intersection(payers)
             if not select.empty:
-                for i1, v1 in counts.loc[select].items():
-                    for i2, v2 in counts.loc[select].items():
+                for _, v1 in counts.loc[select].items():
+                    for _, v2 in counts.loc[select].items():
                         if abs(v1 - v2).round(2) > PENNY:
                             raise ValueError(f"{v1} - {v2} > {PENNY}")
 
@@ -271,7 +265,7 @@ class Splitter:
         Add a group of splits to the tracked splits.
         """
         group = len(self.splits)
-        split = split.model_copy(update=dict(group=group))
+        split = split.model_copy(update={"group": group})
         self.splits[group] = [split, *self._extract_tax_and_tip_for_split(split, *objs)]
         return group
 

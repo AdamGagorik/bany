@@ -11,7 +11,6 @@ from typing import Any
 
 from diskcache import Cache
 
-
 NS = uuid.UUID("2a49a9ba-15cf-40d2-ab95-87961687a04f")
 CACHE = Cache(directory=str(pathlib.Path.cwd()))
 

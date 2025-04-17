@@ -42,10 +42,7 @@ def show_graph(name: str, graph: nx.DiGraph, algo_graph: bool = False, **kwargs)
     try:
         from bany.cmd.solve.network import visualize
 
-        if algo_graph and not kwargs:
-            kwargs = visualize.FORMATS_ALL
-        else:
-            kwargs = kwargs if kwargs else dict(attrs=True)
+        kwargs = visualize.FORMATS_ALL if algo_graph and not kwargs else kwargs if kwargs else {"attrs": True}
         visualize.log(name, graph, **kwargs)
     except Exception:
-        logging.error("can not display graph! %s", name)
+        logging.exception("can not display graph! %s", name)

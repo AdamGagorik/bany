@@ -27,9 +27,11 @@ class BucketData:
     labels: list
 
     @classmethod
-    def from_values(cls, values: ArrayLike, labels: list = None, allow_negative_values: bool = False) -> "BucketData":
+    def from_values(
+        cls, values: ArrayLike, labels: list | None = None, allow_negative_values: bool = False
+    ) -> "BucketData":
         """
-        Create bucket data set from list of known values.
+        Create bucket data set from a list of known values.
         """
         labels = labels if labels is not None else list(range(len(values)))
         values: np.array = np.asanyarray(values, dtype=float)
@@ -38,16 +40,13 @@ class BucketData:
             raise ValueError("negative values in bucket data!")
 
         amount = float(np.sum(values))
-        if amount > 0:
-            ratios = values / amount
-        else:
-            ratios = np.zeros_like(values)
+        ratios = values / amount if amount > 0 else np.zeros_like(values)
         return cls(amount, values, ratios, labels)
 
     @classmethod
-    def from_ratios(cls, ratios: ArrayLike, amount: float, labels: list = None) -> "BucketData":
+    def from_ratios(cls, ratios: ArrayLike, amount: float, labels: list | None = None) -> "BucketData":
         """
-        Create bucket data set from list of known ratios and desired total amount.
+        Create the bucket data set from a list of known ratios and desired total amount.
         """
         if amount < 0:
             raise ValueError("negative amount in bucket data!")
@@ -56,9 +55,8 @@ class BucketData:
         if np.any(ratios < 0):
             raise ValueError("negative ratios in bucket data!")
 
-        if amount > 0:
-            if np.all(ratios <= 0):
-                raise ValueError("all ratios are zero with positive amount!")
+        if amount > 0 and np.all(ratios <= 0):
+            raise ValueError("all ratios are zero with positive amount!")
 
         labels = labels if labels is not None else list(range(len(ratios)))
         ratios = ratios / np.linalg.norm(ratios, 1)
@@ -79,7 +77,7 @@ class BucketSystem:
 
     @classmethod
     def create(
-        cls, amount_to_add: float, current_values: ArrayLike, optimal_ratios: ArrayLike, labels: list = None
+        cls, amount_to_add: float, current_values: ArrayLike, optimal_ratios: ArrayLike, labels: list | None = None
     ) -> "BucketSystem":
         """
         Create a system to solve from the parameters.
@@ -102,7 +100,7 @@ class BucketSystem:
 System
 ======
 
-                 {'  '.join('{:>10}'.format(v) for v in self.current.labels)}
+                 {"  ".join(f"{v:>10}" for v in self.current.labels)}
 amount_to_add  : {moneyfmt(self.amount_to_add)}
 current.values : {moneyfmt(*self.current.values)}
 current.ratios : {moneyfmt(*self.current.ratios, decimals=5)}
@@ -111,6 +109,4 @@ current.amount : {moneyfmt(self.current.amount)}
 optimal.values : {moneyfmt(*self.optimal.values)}
 optimal.ratios : {moneyfmt(*self.optimal.ratios, decimals=5)}
 optimal.amount : {moneyfmt(self.optimal.amount)}
-"""[
-            1:
-        ]
+"""[1:]

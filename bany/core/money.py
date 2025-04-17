@@ -5,8 +5,7 @@ Helper functions for Money.
 import decimal
 import itertools
 
-from moneyed import Money
-from moneyed import USD
+from moneyed import USD, Money
 
 
 def moneyfmt(value, *values, width: int = 12, decimals: int = 2) -> str:

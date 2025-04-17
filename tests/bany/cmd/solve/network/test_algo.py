@@ -31,107 +31,111 @@ def test_get_graph_root(graph, expected_root: str):
     "frame,expected_graph",
     [
         (
-            pd.DataFrame(
-                [
-                    dict(
-                        label="0",
-                        current_value=8000.0,
-                        optimal_ratio=1.0e2,
-                        amount_to_add=0.0,
-                        children=("X", "Y", "Z"),
-                    ),
-                    dict(label="X", current_value=2500.0, optimal_ratio=4.5e1, amount_to_add=0.0, children=()),
-                    dict(label="Y", current_value=5000.0, optimal_ratio=2.0e1, amount_to_add=0.0, children=()),
-                    dict(label="Z", current_value=500.00, optimal_ratio=3.5e1, amount_to_add=0.0, children=("Q", "R")),
-                    dict(label="Q", current_value=200.00, optimal_ratio=2.5e1, amount_to_add=0.0, children=()),
-                    dict(label="R", current_value=300.00, optimal_ratio=7.5e1, amount_to_add=0.0, children=()),
-                ]
-            ),
+            pd.DataFrame([
+                {
+                    "label": "0",
+                    "current_value": 8000.0,
+                    "optimal_ratio": 1.0e2,
+                    "amount_to_add": 0.0,
+                    "children": ("X", "Y", "Z"),
+                },
+                {"label": "X", "current_value": 2500.0, "optimal_ratio": 4.5e1, "amount_to_add": 0.0, "children": ()},
+                {"label": "Y", "current_value": 5000.0, "optimal_ratio": 2.0e1, "amount_to_add": 0.0, "children": ()},
+                {
+                    "label": "Z",
+                    "current_value": 500.00,
+                    "optimal_ratio": 3.5e1,
+                    "amount_to_add": 0.0,
+                    "children": ("Q", "R"),
+                },
+                {"label": "Q", "current_value": 200.00, "optimal_ratio": 2.5e1, "amount_to_add": 0.0, "children": ()},
+                {"label": "R", "current_value": 300.00, "optimal_ratio": 7.5e1, "amount_to_add": 0.0, "children": ()},
+            ]),
             cookbook.make_graph(
                 nodes=[
                     (
                         "0",
-                        dict(
-                            level=0,
-                            current_value=8000.0,
-                            results_value=0.0,
-                            optimal_value=8000.0 * 1.00,
-                            current_ratio=1.0000,
-                            optimal_ratio=1.00,
-                            results_ratio=0.0,
-                            product_ratio=1.00,
-                            amount_to_add=0.0,
-                        ),
+                        {
+                            "level": 0,
+                            "current_value": 8000.0,
+                            "results_value": 0.0,
+                            "optimal_value": 8000.0 * 1.00,
+                            "current_ratio": 1.0000,
+                            "optimal_ratio": 1.00,
+                            "results_ratio": 0.0,
+                            "product_ratio": 1.00,
+                            "amount_to_add": 0.0,
+                        },
                     ),
                     (
                         "X",
-                        dict(
-                            level=1,
-                            current_value=2500.0,
-                            results_value=0.0,
-                            optimal_value=8000.0 * 0.45,
-                            current_ratio=0.3125,
-                            optimal_ratio=0.45,
-                            results_ratio=0.0,
-                            product_ratio=0.45,
-                            amount_to_add=0.0,
-                        ),
+                        {
+                            "level": 1,
+                            "current_value": 2500.0,
+                            "results_value": 0.0,
+                            "optimal_value": 8000.0 * 0.45,
+                            "current_ratio": 0.3125,
+                            "optimal_ratio": 0.45,
+                            "results_ratio": 0.0,
+                            "product_ratio": 0.45,
+                            "amount_to_add": 0.0,
+                        },
                     ),
                     (
                         "Y",
-                        dict(
-                            level=1,
-                            current_value=5000.0,
-                            results_value=0.0,
-                            optimal_value=8000.0 * 0.20,
-                            current_ratio=0.6250,
-                            optimal_ratio=0.20,
-                            results_ratio=0.0,
-                            product_ratio=0.20,
-                            amount_to_add=0.0,
-                        ),
+                        {
+                            "level": 1,
+                            "current_value": 5000.0,
+                            "results_value": 0.0,
+                            "optimal_value": 8000.0 * 0.20,
+                            "current_ratio": 0.6250,
+                            "optimal_ratio": 0.20,
+                            "results_ratio": 0.0,
+                            "product_ratio": 0.20,
+                            "amount_to_add": 0.0,
+                        },
                     ),
                     (
                         "Z",
-                        dict(
-                            level=1,
-                            current_value=500.00,
-                            results_value=0.0,
-                            optimal_value=8000.0 * 0.35,
-                            current_ratio=0.0625,
-                            optimal_ratio=0.35,
-                            results_ratio=0.0,
-                            product_ratio=0.35,
-                            amount_to_add=0.0,
-                        ),
+                        {
+                            "level": 1,
+                            "current_value": 500.00,
+                            "results_value": 0.0,
+                            "optimal_value": 8000.0 * 0.35,
+                            "current_ratio": 0.0625,
+                            "optimal_ratio": 0.35,
+                            "results_ratio": 0.0,
+                            "product_ratio": 0.35,
+                            "amount_to_add": 0.0,
+                        },
                     ),
                     (
                         "Q",
-                        dict(
-                            level=2,
-                            current_value=200.00,
-                            results_value=0.0,
-                            optimal_value=8000.0 * 0.35 * 0.25,
-                            current_ratio=0.4000,
-                            optimal_ratio=0.25,
-                            results_ratio=0.0,
-                            product_ratio=0.35 * 0.25,
-                            amount_to_add=0.0,
-                        ),
+                        {
+                            "level": 2,
+                            "current_value": 200.00,
+                            "results_value": 0.0,
+                            "optimal_value": 8000.0 * 0.35 * 0.25,
+                            "current_ratio": 0.4000,
+                            "optimal_ratio": 0.25,
+                            "results_ratio": 0.0,
+                            "product_ratio": 0.35 * 0.25,
+                            "amount_to_add": 0.0,
+                        },
                     ),
                     (
                         "R",
-                        dict(
-                            level=2,
-                            current_value=300.00,
-                            results_value=0.0,
-                            optimal_value=8000.0 * 0.35 * 0.75,
-                            current_ratio=0.6000,
-                            optimal_ratio=0.75,
-                            results_ratio=0.0,
-                            product_ratio=0.35 * 0.75,
-                            amount_to_add=0.0,
-                        ),
+                        {
+                            "level": 2,
+                            "current_value": 300.00,
+                            "results_value": 0.0,
+                            "optimal_value": 8000.0 * 0.35 * 0.75,
+                            "current_ratio": 0.6000,
+                            "optimal_ratio": 0.75,
+                            "results_ratio": 0.0,
+                            "product_ratio": 0.35 * 0.75,
+                            "amount_to_add": 0.0,
+                        },
                     ),
                 ],
                 edges=[("0", "X"), ("0", "Y"), ("0", "Z"), ("Z", "Q"), ("Z", "R")],
@@ -144,16 +148,14 @@ def test_create(frame: pd.DataFrame, expected_graph: nx.DiGraph):
     cookbook.show_graph("expected_graph", expected_graph, algo_graph=True)
     observed_graph: nx.DiGraph = bany.cmd.solve.network.algo.create(frame)
     cookbook.show_graph("observed_graph", observed_graph, algo_graph=True)
-    attrs, defaults = zip(
-        *[
-            (f.column, -10000)
-            for f in bany.cmd.solve.network.attrs.node_attrs.subset()
-            if f.column
-            not in [
-                bany.cmd.solve.network.attrs.node_attrs.label.column,
-            ]
+    attrs, defaults = zip(*[
+        (f.column, -10000)
+        for f in bany.cmd.solve.network.attrs.node_attrs.subset()
+        if f.column
+        not in [
+            bany.cmd.solve.network.attrs.node_attrs.label.column,
         ]
-    )
+    ])
     node_match = nx.algorithms.isomorphism.numerical_node_match(attrs, defaults)
     assert nx.is_isomorphic(observed_graph, expected_graph, node_match=node_match)
 
@@ -164,19 +166,19 @@ def test_create(frame: pd.DataFrame, expected_graph: nx.DiGraph):
         (
             cookbook.make_graph(
                 nodes=[
-                    ("0", dict(value=8.00)),
-                    ("A", dict(value=2.00)),
-                    ("B", dict(value=2.00)),
-                    ("C", dict(value=4.00)),
+                    ("0", {"value": 8.00}),
+                    ("A", {"value": 2.00}),
+                    ("B", {"value": 2.00}),
+                    ("C", {"value": 4.00}),
                 ],
                 edges=[("0", "A"), ("0", "B"), ("0", "C")],
             ),
             cookbook.make_graph(
                 nodes=[
-                    ("0", dict(value=1.00)),
-                    ("A", dict(value=0.25)),
-                    ("B", dict(value=0.25)),
-                    ("C", dict(value=0.50)),
+                    ("0", {"value": 1.00}),
+                    ("A", {"value": 0.25}),
+                    ("B", {"value": 0.25}),
+                    ("C", {"value": 0.50}),
                 ],
                 edges=[("0", "A"), ("0", "B"), ("0", "C")],
             ),
@@ -186,19 +188,19 @@ def test_create(frame: pd.DataFrame, expected_graph: nx.DiGraph):
         (
             cookbook.make_graph(
                 nodes=[
-                    ("1", dict(value=8.00)),
-                    ("Q", dict(value=2.00)),
-                    ("R", dict(value=2.00)),
-                    ("S", dict(value=4.00)),
+                    ("1", {"value": 8.00}),
+                    ("Q", {"value": 2.00}),
+                    ("R", {"value": 2.00}),
+                    ("S", {"value": 4.00}),
                 ],
                 edges=[("1", "Q"), ("1", "R"), ("1", "S")],
             ),
             cookbook.make_graph(
                 nodes=[
-                    ("1", dict(value=1.00)),
-                    ("Q", dict(value=2.00)),
-                    ("R", dict(value=2.00)),
-                    ("S", dict(value=4.00)),
+                    ("1", {"value": 1.00}),
+                    ("Q", {"value": 2.00}),
+                    ("R", {"value": 2.00}),
+                    ("S", {"value": 4.00}),
                 ],
                 edges=[("1", "Q"), ("1", "R"), ("1", "S")],
             ),
@@ -227,10 +229,10 @@ def test_normalize(starting_graph: nx.DiGraph, expected_graph: nx.DiGraph, key: 
         (
             cookbook.make_graph(
                 nodes=[
-                    ("H", dict(inp_value=1)),
-                    ("I", dict(inp_value=2)),
-                    ("J", dict(inp_value=3)),
-                    ("K", dict(inp_value=4)),
+                    ("H", {"inp_value": 1}),
+                    ("I", {"inp_value": 2}),
+                    ("J", {"inp_value": 3}),
+                    ("K", {"inp_value": 4}),
                 ],
                 edges=[
                     ("H", "I"),
@@ -240,10 +242,10 @@ def test_normalize(starting_graph: nx.DiGraph, expected_graph: nx.DiGraph, key: 
             ),
             cookbook.make_graph(
                 nodes=[
-                    ("H", dict(inp_value=1, out_value=2)),
-                    ("I", dict(inp_value=2, out_value=4)),
-                    ("J", dict(inp_value=3, out_value=6)),
-                    ("K", dict(inp_value=4, out_value=8)),
+                    ("H", {"inp_value": 1, "out_value": 2}),
+                    ("I", {"inp_value": 2, "out_value": 4}),
+                    ("J", {"inp_value": 3, "out_value": 6}),
+                    ("K", {"inp_value": 4, "out_value": 8}),
                 ],
                 edges=[
                     ("H", "I"),
@@ -272,10 +274,10 @@ def test_node_apply(starting_graph: nx.DiGraph, expected_graph: nx.DiGraph, func
         (
             cookbook.make_graph(
                 nodes=[
-                    ("M", dict(inp_value=1.50)),
-                    ("N", dict(inp_value=2.50)),
-                    ("O", dict(inp_value=3.50)),
-                    ("P", dict(inp_value=4.50)),
+                    ("M", {"inp_value": 1.50}),
+                    ("N", {"inp_value": 2.50}),
+                    ("O", {"inp_value": 3.50}),
+                    ("P", {"inp_value": 4.50}),
                 ],
                 edges=[
                     ("M", "N"),
@@ -290,10 +292,10 @@ def test_node_apply(starting_graph: nx.DiGraph, expected_graph: nx.DiGraph, func
         (
             cookbook.make_graph(
                 nodes=[
-                    ("A", dict(inp_value=1.50)),
-                    ("E", dict(inp_value=2.50)),
-                    ("L", dict(inp_value=3.50)),
-                    ("F", dict(inp_value=4.50)),
+                    ("A", {"inp_value": 1.50}),
+                    ("E", {"inp_value": 2.50}),
+                    ("L", {"inp_value": 3.50}),
+                    ("F", {"inp_value": 4.50}),
                 ],
                 edges=[
                     ("A", "E"),
@@ -321,25 +323,25 @@ def test_aggregate(starting_graph: nx.DiGraph, expected_value: float, key: str, 
         (
             cookbook.make_graph(
                 nodes=[
-                    ("1", dict(inp_value=0.50)),
-                    ("2", dict(inp_value=0.25)),
-                    ("3", dict(inp_value=0.50)),
-                    ("4", dict(inp_value=0.75)),
-                    ("5", dict(inp_value=0.10)),
-                    ("6", dict(inp_value=0.10)),
-                    ("7", dict(inp_value=0.10)),
+                    ("1", {"inp_value": 0.50}),
+                    ("2", {"inp_value": 0.25}),
+                    ("3", {"inp_value": 0.50}),
+                    ("4", {"inp_value": 0.75}),
+                    ("5", {"inp_value": 0.10}),
+                    ("6", {"inp_value": 0.10}),
+                    ("7", {"inp_value": 0.10}),
                 ],
                 edges=[("1", "2"), ("1", "3"), ("1", "4"), ("4", "5"), ("5", "6"), ("6", "7")],
             ),
             cookbook.make_graph(
                 nodes=[
-                    ("1", dict(inp_value=0.50, out_value=0.50)),
-                    ("2", dict(inp_value=0.25, out_value=0.50 * 0.25)),
-                    ("3", dict(inp_value=0.50, out_value=0.50 * 0.50)),
-                    ("4", dict(inp_value=0.75, out_value=0.50 * 0.75)),
-                    ("5", dict(inp_value=0.10, out_value=0.50 * 0.75 * 0.10)),
-                    ("6", dict(inp_value=0.10, out_value=0.50 * 0.75 * 0.10 * 0.10)),
-                    ("7", dict(inp_value=0.10, out_value=0.50 * 0.75 * 0.10 * 0.10 * 0.10)),
+                    ("1", {"inp_value": 0.50, "out_value": 0.50}),
+                    ("2", {"inp_value": 0.25, "out_value": 0.50 * 0.25}),
+                    ("3", {"inp_value": 0.50, "out_value": 0.50 * 0.50}),
+                    ("4", {"inp_value": 0.75, "out_value": 0.50 * 0.75}),
+                    ("5", {"inp_value": 0.10, "out_value": 0.50 * 0.75 * 0.10}),
+                    ("6", {"inp_value": 0.10, "out_value": 0.50 * 0.75 * 0.10 * 0.10}),
+                    ("7", {"inp_value": 0.10, "out_value": 0.50 * 0.75 * 0.10 * 0.10 * 0.10}),
                 ],
                 edges=[("1", "2"), ("1", "3"), ("1", "4"), ("4", "5"), ("5", "6"), ("6", "7")],
             ),

@@ -6,18 +6,13 @@ from collections.abc import Generator
 from json import JSONDecodeError
 
 import requests
-from pydantic import AnyUrl
-from pydantic import TypeAdapter
-from requests import HTTPError
-from requests import Response
+from pydantic import AnyUrl, TypeAdapter
+from requests import HTTPError, Response
 
 from bany.core.cache import cached
 from bany.core.logger import logger
 from bany.core.settings import Settings
-from bany.ynab.transaction import ScheduledTransaction
-from bany.ynab.transaction import Transaction
-from bany.ynab.transaction import Transactions
-
+from bany.ynab.transaction import ScheduledTransaction, Transaction, Transactions
 
 KEYS = (
     lambda self: self.environ.YNAB_API_URL,
@@ -38,18 +33,19 @@ class YNAB:
         return TypeAdapter(AnyUrl).validate_python(url)
 
     def _make_headers(self, **kwargs):
-        return dict(Authorization=f"Bearer {self.environ.YNAB_API_KEY.get_secret_value()}") | kwargs
+        return {"Authorization": f"Bearer {self.environ.YNAB_API_KEY.get_secret_value()}"} | kwargs
 
-    def _make_request(self, method: str, endpoint: str, **kwargs) -> Response:
+    def _make_request(self, method: str, endpoint: str, timeout: int | None = None, **kwargs) -> Response:
         url = self._make_url(endpoint)
         headers = self._make_headers(**kwargs.pop("headers", {}))
-        response = requests.request(method, str(url), headers=headers, **kwargs)
+        response = requests.request(method, str(url), headers=headers, timeout=timeout, **kwargs)
         try:
             response.raise_for_status()
-            return response
         except HTTPError as e:
             logger.error(response.json())
             raise e from None
+        else:
+            return response
 
     @cached(*KEYS)
     def budgets(self) -> dict:

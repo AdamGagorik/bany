@@ -18,8 +18,7 @@ from bany.cmd.solve.network.algo import aggregate_quantity
 from bany.cmd.solve.network.attrs import node_attrs
 from bany.cmd.solve.solvers.basesolver import BucketSolver
 from bany.cmd.solve.solvers.graphsolver import solve
-from bany.core.logger import logger
-from bany.core.logger import logline
+from bany.core.logger import logger, logline
 from bany.core.money import moneyfmt
 
 

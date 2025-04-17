@@ -6,25 +6,15 @@ import functools
 import re
 import sys
 import textwrap
-from argparse import Action
-from argparse import ArgumentParser
-from argparse import Namespace
+from argparse import Action, ArgumentParser, Namespace
 from typing import Any
 
 import pandas as pd
-from cmd2 import Cmd
-from cmd2 import Cmd2ArgumentParser
-from cmd2 import CommandSet
-from cmd2 import Statement
-from cmd2 import with_argparser
-from cmd2 import with_default_category
+from cmd2 import Cmd, Cmd2ArgumentParser, CommandSet, Statement, with_argparser, with_default_category
 from rich.console import Console
 from rich.prompt import Confirm
 
-from bany.cmd.split.splitter import Split
-from bany.cmd.split.splitter import Splitter
-from bany.cmd.split.splitter import Tax
-from bany.cmd.split.splitter import Tip
+from bany.cmd.split.splitter import Split, Splitter, Tax, Tip
 from bany.core.money import as_money
 
 
@@ -76,7 +66,7 @@ def safe_eval(expression: str) -> int | float:
     if code.co_names:
         raise NameError("Use of names not allowed")
 
-    return eval(expression, {"__builtins__": None}, {})
+    return eval(expression, {"__builtins__": None}, {})  # noqa: S307
 
 
 class MoneyAction(Action):
@@ -84,7 +74,9 @@ class MoneyAction(Action):
     Parse an expression with simple math into a Money instance.
     """
 
-    def __call__(self, parser: ArgumentParser, namespace: Namespace, values: list[str], option_string: str = None):
+    def __call__(
+        self, parser: ArgumentParser, namespace: Namespace, values: list[str], option_string: str | None = None
+    ):
         """
         Parse the values expression and update the destination.
         """
@@ -108,7 +100,9 @@ class KwargsAction(Action):
     Store the result inside a dictionary called dest.
     """
 
-    def __call__(self, parser: ArgumentParser, namespace: Namespace, values: list[str], option_string: str = None):
+    def __call__(
+        self, parser: ArgumentParser, namespace: Namespace, values: list[str], option_string: str | None = None
+    ):
         """
         Parse the values expression and update the destination.
         """
@@ -130,7 +124,7 @@ class KwargsAction(Action):
             if not value:
                 raise ValueError(f"missing value after = sign! {option_string} {expr}")
 
-            # key must not already be defined
+            # key must not yet be defined
             if key in lut:
                 raise KeyError(f"duplicate key for {option_string} {expr}")
 
@@ -286,7 +280,7 @@ class SplitTransactions(CommandSet):
             return
 
         for group in opts.groups:
-            self._cmd.poutput(f"[red underline]tax group [{group:>3}] at: {opts.rate*100:6.2f}%")
+            self._cmd.poutput(f"[red underline]tax group [{group:>3}] at: {opts.rate * 100:6.2f}%")
             self.splitter.tax(Tax(rate=opts.rate, payee=opts.payee))
 
     @with_argparser(tip_parser())
@@ -296,7 +290,7 @@ class SplitTransactions(CommandSet):
             return
 
         for group in opts.groups:
-            self._cmd.poutput(f"[red underline]tip group [{group:>3}] at: {str(opts.amount):>7}")
+            self._cmd.poutput(f"[red underline]tip group [{group:>3}] at: {opts.amount!s:>7}")
             self.splitter.tip(Tip(amount=opts.amount, category=opts.category))
 
     def do_show(self, _: Statement):
@@ -322,7 +316,7 @@ class SplitTransactions(CommandSet):
             debtors=opts.debit,
         )
         group = self.splitter.split(split)
-        self._cmd.poutput(f"[red underline]add group [{group:>3}] at: {str(opts.amount):>7}")
+        self._cmd.poutput(f"[red underline]add group [{group:>3}] at: {opts.amount!s:>7}")
 
     def do_summarize(self, _: Statement):
         """
@@ -365,12 +359,11 @@ class SplitTransactions(CommandSet):
                 self._cmd.perror(f"no transactions to delete with group == {opts.group}!")
                 return
         else:
-            self._cmd.perror(self._delete_parser.format_help())
+            self._cmd.perror(delete_parser().format_help())
 
     def _display_frame(self, frame: pd.DataFrame | None = None):
-        if frame is None:
-            if self.splitter.splits:
-                frame = self.splitter.frame
+        if frame is None and self.splitter.splits:
+            frame = self.splitter.frame
 
         if frame is None or frame.empty:
             self._cmd.perror("no frame to display")

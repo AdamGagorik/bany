@@ -12,8 +12,7 @@ from typing import Any
 import pandas as pd
 import yaml
 
-from bany.cmd.solve.network.attrs import INPUT_VALUE
-from bany.cmd.solve.network.attrs import node_attrs
+from bany.cmd.solve.network.attrs import INPUT_VALUE, node_attrs
 
 
 def load(path: str | Path, **kwargs: Any) -> pd.DataFrame:

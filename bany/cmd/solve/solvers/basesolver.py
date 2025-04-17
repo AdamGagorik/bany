@@ -4,8 +4,7 @@ A base class for solutions to the bucket problem.
 
 import dataclasses
 
-from bany.cmd.solve.solvers.bucketdata import BucketData
-from bany.cmd.solve.solvers.bucketdata import BucketSystem
+from bany.cmd.solve.solvers.bucketdata import BucketData, BucketSystem
 from bany.core.money import moneyfmt
 
 
@@ -32,9 +31,9 @@ class BucketSolver:
     def __str__(self):
         return rf"""
 {self.__class__.__name__}
-{'=' * len(self.__class__.__name__)}
+{"=" * len(self.__class__.__name__)}
 
-                 {'  '.join('{:>10}'.format(v) for v in self.system.current.labels)}
+                 {"  ".join(f"{v:>10}" for v in self.system.current.labels)}
 delta.values   : {moneyfmt(*self.result_delta.values)}
 delta.ratios   : {moneyfmt(*self.result_delta.ratios, decimals=5)}
 delta.amount   : {moneyfmt(self.result_delta.amount)}
@@ -45,6 +44,4 @@ total.amount   : {moneyfmt(self.result_total.amount)}
 
 differ.amount  : {moneyfmt(self.result_delta.amount - self.system.amount_to_add)}
 differ.ratios  : {moneyfmt(*(self.result_total.ratios - self.system.optimal.ratios), decimals=5)}
-"""[
-            1:
-        ]
+"""[1:]

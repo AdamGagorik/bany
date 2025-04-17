@@ -9,12 +9,8 @@ import networkx as nx
 import networkx.exception
 
 from bany.cmd.solve.network import algo
-from bany.cmd.solve.network.attrs import DISPLAY_ALL
-from bany.cmd.solve.network.attrs import DISPLAY_INP
-from bany.cmd.solve.network.attrs import DISPLAY_OUT
-from bany.cmd.solve.network.attrs import node_attrs
+from bany.cmd.solve.network.attrs import DISPLAY_ALL, DISPLAY_INP, DISPLAY_OUT, node_attrs
 from bany.core.logger import logger
-
 
 FORMATS_ALL = {f.column: f.display for f in node_attrs.subset(filters=DISPLAY_ALL)}
 FORMATS_INP = {f.column: f.display for f in node_attrs.subset(filters=DISPLAY_INP)}
@@ -25,7 +21,7 @@ def log(key: str, graph: nx.DiGraph, **kwargs):
     """
     Display the graph using ASCII art using logger.
     """
-    logger.info("%s:\n%s", key, text(graph, **kwargs), extra=dict(markup=True))
+    logger.info("%s:\n%s", key, text(graph, **kwargs), extra={"markup": True})
 
 
 def text(graph: nx.DiGraph, attrs: bool = False, **kwargs) -> str:
@@ -110,7 +106,7 @@ class TextDisplayer:
             for n, f in self.attrs.items():
                 yield n, f if f is not None else "{}"
         else:
-            for n in self.graph.nodes[label].keys():
+            for n in self.graph.nodes[label]:
                 yield n, "{}"
 
     def _write_child_node(self, label: str, indent: str, last: bool):

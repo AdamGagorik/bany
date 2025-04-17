@@ -1,7 +1,5 @@
-from pydantic import AnyUrl
-from pydantic import SecretStr
-from pydantic_settings import BaseSettings
-from pydantic_settings import SettingsConfigDict
+from pydantic import AnyUrl, SecretStr
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):

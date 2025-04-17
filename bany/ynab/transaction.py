@@ -2,12 +2,7 @@ import uuid
 from datetime import date
 from typing import Literal
 
-from pydantic import BaseModel
-from pydantic import ConfigDict
-from pydantic import Field
-from pydantic import field_validator
-from pydantic import ValidationInfo
-
+from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validator
 
 NS = uuid.UUID("b9b024c9-e918-4447-9b75-2b340535d49e")
 

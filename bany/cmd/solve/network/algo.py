@@ -45,11 +45,11 @@ def create(frame: pd.DataFrame) -> nx.DiGraph:
     ]
 
     graph = nx.DiGraph()
-    for index, data in frame.iterrows():
+    for _, data in frame.iterrows():
         label = data[node_attrs.label.column]
         graph.add_node(label, **{attr.column: data.get(attr.column, default=attr.value) for attr in attrs})
 
-    for index, data in frame.iterrows():
+    for _, data in frame.iterrows():
         label = data[node_attrs.label.column]
         for child in data.get("children", default=()):
             if label not in graph or child not in graph:
@@ -104,7 +104,7 @@ def create(frame: pd.DataFrame) -> nx.DiGraph:
 
 
 def normalize(
-    graph: nx.DiGraph, key: str, out: str = None, levels: int | list[int] | None = None, inplace: bool = True
+    graph: nx.DiGraph, key: str, out: str | None = None, levels: int | list[int] | None = None, inplace: bool = True
 ) -> nx.DiGraph:
     """
     Make it so the amounts at each level sum to 100 percent.
@@ -136,7 +136,7 @@ def normalize(
         dframe = dframe[dframe["level"].isin(levels)]
 
     if not dframe.empty:
-        for level, group in dframe.groupby(by="level"):
+        for _, group in dframe.groupby(by="level"):
             group["values"] = group.index.map(values)
             total = group["values"].sum()
             if total > 0:
@@ -168,10 +168,7 @@ def node_apply(
         out_graph.add_nodes_from(graph)
         out_graph.add_edges_from(graph.edges)
     else:
-        if not inplace:
-            out_graph = copy.deepcopy(graph)
-        else:
-            out_graph = graph
+        out_graph = copy.deepcopy(graph) if not inplace else graph
 
     sig = list(inspect.signature(func).parameters.keys())
     if not sig:
@@ -180,10 +177,10 @@ def node_apply(
     for node in graph.nodes:
         try:
             kwargs = {name: graph.nodes[node][name] for name in sig}
-        except KeyError:
-            logging.error("expected node attributes: %s", ", ".join(sig))
-            logging.error("observed node attributes: %s", ", ".join(graph.nodes[node].keys()))
-            raise AttributeError("can not call apply with function, node is missing attributes!")
+        except KeyError as e:
+            logging.exception("expected node attributes: %s", ", ".join(sig))
+            logging.exception("observed node attributes: %s", ", ".join(graph.nodes[node].keys()))
+            raise AttributeError("can not call apply with function, node is missing attributes!") from e
 
         out_graph.nodes[node][out] = func(**kwargs)
 
@@ -214,10 +211,10 @@ def aggregate_quantity(
 
 
 def aggregate_quantity_along_depth(
-    graph: nx.DiGraph, key: str, out: str = None, reduce: typing.Callable = operator.mul, inplace: bool = True
+    graph: nx.DiGraph, key: str, out: str | None = None, reduce: typing.Callable = operator.mul, inplace: bool = True
 ) -> nx.DiGraph:
     """
-    Traverse the graph in a depth first manner, reducing the node quantity at the key.
+    Traverse the graph in a depth-first manner, reducing the node quantity at the key.
 
     Parameters:
         graph: The DAG to traverse.
