@@ -1,23 +1,6 @@
-##
-# Dependabot automatically creates pull requests to update dependencies.
-# https://docs.github.com/en/code-security/supply-chain-security/configuration-options-for-dependency-updates
-#
 version: 2
-
 updates:
-- package-ecosystem: github-actions
-  directory: /
-  schedule:
-    interval: monthly
-  labels:
-    - "CI/CD"
-    - "GitHubAction"
-- package-ecosystem: pip
-  insecure-external-code-execution: allow
-  directory: /
-  schedule:
-    interval: monthly
-  labels:
-    - "Python"
-    - "🚧 REBUILD"
-    - "dependencies"
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "monthly"
