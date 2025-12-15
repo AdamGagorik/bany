@@ -4,7 +4,7 @@
 dates:
   Force Date:
     value: |-
-      2025-04-15
+      2026-01-01
 
   Check Date:
     regex: |-
@@ -188,7 +188,7 @@ transactions:
 
 - budget: 2025
   account: 'PNC : Spend'
-  category: 'Internal Master Category : Inflow: Ready to Assign'
+  category: 'Miscellaneous : Uncategorized'
   payee: Ford
   memo: 2025
   color: red
@@ -197,7 +197,16 @@ transactions:
 
 - budget: 2025
   account: 'PNC : Spend'
-  category: 'Internal Master Category : Inflow: Ready to Assign'
+  category: 'Miscellaneous : Uncategorized'
+  payee: Ford
+  memo: 2025
+  color: red
+  amount: Award
+  date: Force Date
+
+- budget: 2025
+  account: 'PNC : Spend'
+  category: 'Miscellaneous : Uncategorized'
   payee: Ford
   memo: 2025
   color: red
