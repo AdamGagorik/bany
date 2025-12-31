@@ -169,3 +169,8 @@ cython_debug/
 junit.xml
 .python-version
 cache.db
+
+
+# Added by cargo
+
+/target
